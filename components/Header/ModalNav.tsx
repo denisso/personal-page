@@ -135,7 +135,7 @@ export const ModalNav = () => {
             if (filter.trim() !== "") {
                 setItems(
                     itemsCache.current.filter((item) =>
-                        item.title.includes(filter)
+                        item.title.toLowerCase().includes(filter.toLowerCase())
                     )
                 );
             } else {
