@@ -45,15 +45,25 @@ export default async function handler(
                         result.error = errorContentful.error;
                         return res.status(200).json(result);
                     }
-                    menu.menu = response.menu;
+                    menu.menu = [...response.menu];
                     result.menu = menu.menu;
-                    
                 }
                 break;
             case "getmenu":
                 {
-                    result.error = errorContentful.error;
-                    result.menu = menu.menu;
+                    if (Array.isArray(menu.menu) && menu.menu.length == 0) {
+                        const response = await getMenu();
+                        if (response.error) {
+                            errorContentful.error = EErrorAPI.requestError;
+                            result.error = errorContentful.error;
+                            return res.status(200).json(result);
+                        }
+                        menu.menu = [...response.menu];
+                        result.menu = menu.menu;
+                    } else {
+                        result.menu = menu.menu;
+                        result.error = errorContentful.error;
+                    }
                 }
                 break;
             default:
