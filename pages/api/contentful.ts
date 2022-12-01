@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { errorContentful, EErrorAPI } from "../../data";
+import { EErrorAPI } from "../../lib/types";
+import getConfig from "next/config";
 type TResult = {
     result?: boolean;
     error?: EErrorAPI | string;
@@ -21,6 +22,7 @@ export default async function handler(
     const result: TResult = {}
     const body = req.body;
     try {
+        const { serverRuntimeConfig } = getConfig();
         if (!process.env.SECURITY_TOKEN) {
             result.error = "the security token not set";
             return res.status(200).json(result);
@@ -31,7 +33,7 @@ export default async function handler(
         }
         
         if (body && body?.limitReached) {
-            errorContentful.error = EErrorAPI.limitReached;
+            serverRuntimeConfig.errorApi = EErrorAPI.limitReached;
             result.error = EErrorAPI.limitReached;
         }
         return res.json({ result: true });
