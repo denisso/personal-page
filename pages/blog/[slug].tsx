@@ -24,17 +24,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
     }
     const schema: TSchema = [
         {
-            entity: EEntities.category,
+            entity: EEntities.blog,
             fields: ETypeFields.previewAndBody,
             fieldsCustom: [],
             variables: { where: { slug: realSlug }, limit: 1 },
-            links: [
-                {
-                    entity: EEntities.posts,
-                    fields: ETypeFields.preview,
-                    fieldsCustom: [],
-                },
-            ],
         },
     ];
     const response: TResponseGeneric = await getEntities({
