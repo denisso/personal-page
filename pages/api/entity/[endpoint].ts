@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { TErrorAPI, errorContentful, EErrorAPI } from "../../../data";
+import { TErrorAPI, EErrorAPI } from "../../../lib/types";
+import getConfig from "next/config";
 
 interface INextApiRequestEndpoint extends NextApiRequest {
     query: {
@@ -23,6 +24,7 @@ export default async function handler(
     const result: TResponse = {};
     const body = req?.body;
     try {
+        const { serverRuntimeConfig } = getConfig();
         switch (req?.query?.endpoint) {
             case "revalidate":
                 {
@@ -34,7 +36,7 @@ export default async function handler(
                         result.error = "the security token is incorrect";
                         return res.status(200).json(result);
                     }
-                    if (errorContentful.error === EErrorAPI.noError) {
+                    if (serverRuntimeConfig.errorApi === EErrorAPI.noError) {
                         // logic here
                         const entities = JSON.parse(body.data);
                         for (const entity in entities) {
@@ -59,7 +61,7 @@ export default async function handler(
                     } else {
                         return res
                             .status(500)
-                            .send({ error: errorContentful.error });
+                            .send({ error: serverRuntimeConfig.errorApi });
                     }
                 }
                 break;
