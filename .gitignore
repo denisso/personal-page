@@ -34,3 +34,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+#prepare script
+prepare.cmd
+
+#yarn
+yarn.lock
+
+# Local Netlify folder
+.netlify
+
+# project features
+/service-data
