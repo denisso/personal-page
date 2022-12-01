@@ -2,7 +2,7 @@ import React from "react";
 import { Modal, useModal } from "../../features/modal";
 import styled from "styled-components";
 import axios, { AxiosResponse, AxiosError } from "axios";
-import { TMenu, TMenuItem } from "../../lib/types";
+import { TMenu, TMenuItem, EEntities } from "../../lib/types";
 import Button from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
 import {
@@ -112,9 +112,10 @@ export const ModalNav = () => {
     React.useEffect(() => {
         getMenu()
             .then((items: TMenu["menu"]) => {
+
                 itemsCache.current = items;
                 const result = items.reduce((p, e) => {
-                    if (e.type === "category") {
+                    if (e.type as string === EEntities.category) {
                         p.articles += e.total
                     }
                     return p

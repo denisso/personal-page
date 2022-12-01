@@ -5,7 +5,10 @@ const withTM = require("next-transpile-modules")([
 
  module.exports = withTM({
     serverRuntimeConfig: {
+        // menu cache
         menu: [],
+        menuHash: "",
+        // last api access error
         errorApi: 0
     },
     images: {
