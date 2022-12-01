@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getMenu } from "../../../lib/contentful/getMenu";
-import { menu, errorContentful, TErrorAPI, EErrorAPI } from "../../../data";
-import { TMenu } from "../../../lib/types";
+import { TErrorAPI, EErrorAPI, TMenu } from "../../../lib/types";
+import getConfig from "next/config";
 
 interface INextApiRequestEndpoint extends NextApiRequest {
     query: {
@@ -23,6 +23,7 @@ export default async function handler(
     };
     const body = req?.body;
     try {
+        const { serverRuntimeConfig } = getConfig();
         switch (req?.query?.endpoint) {
             case "revalidate":
                 {
@@ -35,35 +36,41 @@ export default async function handler(
                         return res.status(200).json(result);
                     }
 
-                    if (errorContentful.error !== EErrorAPI.noError) {
-                        result.error = errorContentful.error;
+                    if (serverRuntimeConfig.errorApi !== EErrorAPI.noError) {
+                        result.error = serverRuntimeConfig.errorApi;
                         return res.status(200).json(result);
                     }
                     const response = await getMenu();
                     if (response.error) {
-                        errorContentful.error = EErrorAPI.requestError;
-                        result.error = errorContentful.error;
+                        serverRuntimeConfig.errorApi = EErrorAPI.requestError;
+                        result.error = serverRuntimeConfig.errorApi;
                         return res.status(200).json(result);
                     }
-                    menu.menu = [...response.menu];
-                    result.menu = menu.menu;
+
+                    serverRuntimeConfig.MENU = [...response.menu];
+
+                    result.menu = serverRuntimeConfig.MENU;
                 }
                 break;
             case "getmenu":
                 {
-                    if (Array.isArray(menu.menu) && menu.menu.length == 0) {
+
+                    if (
+                        !Array.isArray(serverRuntimeConfig.MENU) ||
+                        serverRuntimeConfig.MENU.length == 0
+                    ) {
                         const response = await getMenu();
+
                         if (response.error) {
-                            errorContentful.error = EErrorAPI.requestError;
-                            result.error = errorContentful.error;
+                            serverRuntimeConfig.errorApi =
+                                EErrorAPI.requestError;
+                            result.error = serverRuntimeConfig.errorApi;
                             return res.status(200).json(result);
                         }
-                        menu.menu = [...response.menu];
-                        result.menu = menu.menu;
-                    } else {
-                        result.menu = menu.menu;
-                        result.error = errorContentful.error;
+                        serverRuntimeConfig.MENU = [...response.menu];
                     }
+                    result.menu = serverRuntimeConfig.MENU;
+                    result.error = serverRuntimeConfig.errorApi;
                 }
                 break;
             default:
