@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, useModal } from "../../features/modal";
 import styled from "styled-components";
-import axios, { AxiosResponse, AxiosError } from "axios";
+import axios, { AxiosResponse } from "axios";
 import { TMenu, TMenuItem, EEntities } from "../../lib/types";
 import Button from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
@@ -15,17 +15,7 @@ import {
 import { Chips, TChip } from "../Elements/Chips";
 import { updateState } from "../../features/state";
 import { useDispatch } from "react-redux";
-
-const getMenu = () : Promise<TMenu["menu"]> => {
-    return new Promise((resolve, reject) =>
-        axios
-            .get("/api/menu/getmenu")
-            .then(({ data }: AxiosResponse<TMenu>) => {
-                resolve(data.menu);
-            })
-            .catch((err: AxiosError) => reject(err.message))
-    );
-};
+import useSWR from "swr";
 
 const ModalStyled = styled(Modal)`
     transition: width var(--transition), height var(--transition);
@@ -100,6 +90,9 @@ const stateLabels: TStateLabels = {
     Error: "Неудача, Искать снова",
 };
 
+const getMenu = (url: string): Promise<TMenu["menu"]> =>
+    axios.get(url).then(({ data }: AxiosResponse<TMenu>) => data.menu);
+
 export const ModalNav = () => {
     const { isModalOpen, closeModal } = useModal({ modal: "navMenu" });
     const [stateSubmit, setStateSubmit] = React.useState<ESubmitStates>(
@@ -108,27 +101,32 @@ export const ModalNav = () => {
     const itemsCache = React.useRef<Array<TMenuItem>>([]);
     const filterVal = React.useRef<string>("");
     const [items, setItems] = React.useState<Array<TMenuItem>>([]);
-    const dispatch = useDispatch()
-    React.useEffect(() => {
-        getMenu()
-            .then((items: TMenu["menu"]) => {
+    const dispatch = useDispatch();
 
-                itemsCache.current = items;
-                const result = items.reduce((p, e) => {
-                    if (e.type as string === EEntities.category) {
-                        p.articles += e.total
+    const { data /*error*/ } = useSWR("/api/menu/getmenu", getMenu, {
+        refreshInterval: 10000,
+    });
+
+    React.useEffect(() => {
+        if (data) {
+            itemsCache.current = data;
+            const result = data.reduce(
+                (p, e) => {
+                    if ((e.type as string) === EEntities.category) {
+                        p.articles += e.total;
                     }
-                    return p
-                }, { articles: 0 })
-                dispatch(updateState(result))
-                setItems(
-                    itemsCache.current.filter((item) =>
-                        item.title.includes(filterVal.current)
-                    )
-                );
-            })
-            .catch(() => "not implemented yet");
-    }, [setItems, dispatch]);
+                    return p;
+                },
+                { articles: 0 }
+            );
+            dispatch(updateState(result));
+            setItems(
+                itemsCache.current.filter((item) =>
+                    item.title.includes(filterVal.current)
+                )
+            );
+        }
+    }, [data, setItems, dispatch]);
     const onSubmit = React.useCallback(
         ({ filter }: TFormValues) => {
             // submit
