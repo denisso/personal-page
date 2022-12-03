@@ -27,7 +27,7 @@ export const NavMenuDynamic = ({ className }: Props) => {
     };
 
     return (
-        <Container sx={{ minWidth: 120 }} className={className}>
+        <Container sx={{ minWidth: 60 }} className={className}>
             <Button onClick={hendleClick}><MenuIcon/></Button>
             <ModalNav />
         </Container>
