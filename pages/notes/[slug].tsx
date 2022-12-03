@@ -1,9 +1,9 @@
 import { TPageGeneric } from "../../lib/types";
 import { PageGeneric } from "../../components/Pages/PageGeneric";
 import { GetStaticProps } from "next";
-import { EEntities, TResponseGeneric } from "../../lib/types";
+import { EEntities } from "../../lib/types";
 import { TSchema, ETypeFields } from "../../lib/contentful/queryGenerator";
-import { getEntities } from "../../lib/contentful/getEnties";
+import { getSlug, getStaticPropsWrapper } from "../../lib/getStaticProps";
 
 const NotesPage = (props: TPageGeneric) => <PageGeneric {...props} />;
 
@@ -17,18 +17,13 @@ export async function getStaticPaths() {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-    let realSlug = "";
-    if (Array.isArray(context?.params?.slug)) {
-        realSlug = context?.params?.slug[0];
-    } else if (typeof context?.params?.slug === "string") {
-        realSlug = context?.params?.slug;
-    }
+    const slug = getSlug(context?.params?.slug);
     const schema: TSchema = [
         {
             entity: EEntities.notes,
             fields: ETypeFields.previewAndBody,
             fieldsCustom: [],
-            variables: { where: { slug: realSlug }, limit: 1 },
+            variables: { where: { slug }, limit: 1 },
             refs: [
                 {
                     entity: EEntities.posts,
@@ -38,20 +33,16 @@ export const getStaticProps: GetStaticProps = async (context) => {
             ],
         },
     ];
-    const response: TResponseGeneric = await getEntities({
+
+    const result = await getStaticPropsWrapper({
         schema,
+        handlerData: (data) => {
+            if (!data[EEntities.notes][0]) {
+                return null;
+            }
+            return data[EEntities.notes][0];
+        },
     });
-    const props: TPageGeneric = { data: {}, error: false };
 
-    try {
-        if (response.data[EEntities.notes][0])
-            props.data = response.data[EEntities.notes][0];
-    } catch (err) {
-        props.error = err.message;
-    }
-
-    return {
-        props,
-        revalidate: 24 * 3600,
-    };
+    return result;
 };

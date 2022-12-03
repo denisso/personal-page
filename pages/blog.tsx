@@ -1,10 +1,10 @@
 import { GetStaticProps } from "next";
-import { TPageGeneric } from "../lib/types";
+import { TPageGeneric, TPropsGeneric } from "../lib/types";
 import { PageGeneric } from "../components/Pages/PageGeneric";
 import { TSchema } from "../lib/contentful/queryGenerator";
 import { EEntities } from "../lib/types";
 import { ETypeFields } from "../lib/contentful/queryGenerator";
-import { getEntities } from "../lib/contentful/getEnties";
+import { getStaticPropsWrapper } from "../lib/getStaticProps";
 
 const Blog = (props: TPageGeneric) => <PageGeneric {...props} />;
 export default Blog;
@@ -25,17 +25,22 @@ export const getStaticProps: GetStaticProps = async () => {
             variables: { limit: 100 },
         },
     ];
-    const props: TPageGeneric = { data: {}, error: false };
-    const entites = await getEntities({ schema });
 
-    try {
-        props.data = entites.data[EEntities.pages][0];
-        props.data.links = {};
-        props.data.links[EEntities.blog] = entites.data[EEntities.blog];
-        props.data.links._all = entites.data[EEntities.blog];
-    } catch (err) {
-        props.error = err.message;
-    }
+    const result = await getStaticPropsWrapper({
+        schema,
+        handlerData: (data) => {
+            if (!data[EEntities.pages][0]) {
+                return null;
+            }
+            const result: TPropsGeneric = data[EEntities.pages][0];
 
-    return { props, revalidate: 24 * 3600 };
+            result.links = {};
+            result.links[EEntities.blog] = data[EEntities.blog];
+            result.links._all = data[EEntities.blog];
+
+            return result;
+        },
+    });
+
+    return result;
 };

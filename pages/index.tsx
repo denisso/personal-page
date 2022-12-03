@@ -1,10 +1,9 @@
-import { getEntities } from "../lib/contentful/getEnties";
 import { TPageHome } from "../lib/types";
 import Layout from "../components/Layout";
 import { Home } from "../components/Pages/Home";
 import { TSchema, ETypeFields } from "../lib/contentful/queryGenerator";
-import { EEntities, TResponseGeneric } from "../lib/types";
-
+import { EEntities } from "../lib/types";
+import { getStaticPropsWrapper } from "../lib/getStaticProps";
 const HomePage = (props: TPageHome): JSX.Element => {
 
     return (
@@ -20,7 +19,7 @@ const HomePage = (props: TPageHome): JSX.Element => {
 export default HomePage;
 
 export async function getStaticProps() {
-    const pageHome: TSchema = [
+    const schema: TSchema = [
         {
             entity: EEntities.pages,
             fields: ETypeFields.previewAndBody,
@@ -28,23 +27,16 @@ export async function getStaticProps() {
             variables: { where: { slug: "/" } },
         },
     ];
-    const response: TResponseGeneric = await getEntities({
-        schema: pageHome,
+    
+    const result = await getStaticPropsWrapper({
+        schema,
+        handlerData: (data) => {
+            if (!data[EEntities.pages][0]) {
+                return null;
+            }
+            return data[EEntities.pages][0];
+        },
     });
 
-    const props: TPageHome = { data: {}, error: true };
-    try {
-        if (response.data[EEntities.pages][0])
-            Object.assign(props, {
-                data: response.data[EEntities.pages][0],
-                error: response.error,
-            });
-    } catch (err) {
-        props.error = err.message;
-    }
-
-    return {
-        props,
-        revalidate: 24 * 3600,
-    };
+    return result;
 }

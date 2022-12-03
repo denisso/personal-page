@@ -1,4 +1,4 @@
-import { TImage, TPropsGeneric } from "../types";
+import { TImage, TPropsGeneric, THandleResponseResult } from "../types";
 import { convertMarkdownToHtml } from "../markdowntoHtml";
 import { ETypeFields, TSchema, TSchemaItem } from "./queryGenerator";
 import serialize from "serialize-javascript";
@@ -32,12 +32,8 @@ type THandleResponseProps = {
     schema: TSchema;
 };
 
-type TResponseResult<T = TPropsGeneric> = {
-    [key: string]: Array<T>;
-};
-
 interface IHandleResponse<T = TPropsGeneric> {
-    ({ data }: THandleResponseProps): TResponseResult<T>;
+    ({ data }: THandleResponseProps): THandleResponseResult<T>;
 }
 export const handleResponse: IHandleResponse = ({
     data,
@@ -46,7 +42,7 @@ export const handleResponse: IHandleResponse = ({
     data: any;
     schema: TSchema;
 }) => {
-    const result: TResponseResult = {};
+    const result: THandleResponseResult = {};
 
     for (const schemaItem of schema) {
         if (!Object.keys(data).find((entity) => entity === schemaItem.entity))

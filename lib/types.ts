@@ -5,8 +5,8 @@ export enum EErrorAPI {
 }
 
 export type TErrorAPI = {
-    error: EErrorAPI | false
-}
+    error: EErrorAPI | boolean;
+};
 
 export enum EEntities {
     category = "Category",
@@ -24,7 +24,16 @@ export type TEntities = {
     blog: "Blog";
 };
 
-export type TResponseGeneric = TPageGeneric
+export type TError = string | boolean;
+
+export type THandleResponseResult<T = TPropsGeneric> = {
+    [key: string]: Array<T>;
+};
+
+export type TResponseGeneric<T = TPropsGeneric> = {
+    data: THandleResponseResult<T> | Array<T>;
+    error: TError;
+};
 
 export const entitiesNames: {
     [type in keyof TEntities]: { single: string; mulpiple: string };
@@ -62,7 +71,7 @@ export type TImage = {
     path: string;
 };
 
-export type TRefLinks =  Partial<{
+export type TRefLinks = Partial<{
     [type: string]: Array<TPropsGeneric>;
     _all: Array<TPropsGeneric>;
 }>;
@@ -77,7 +86,7 @@ export type TPropsGeneric = Partial<{
     type: string;
     publishedAt: string;
     firstPublishedAt: string;
-    _extra: any, // don't think about it too much
+    _extra: any; // don't think about it too much
     [key: string]: any; // don't think about it too much
     ref: TRefLinks;
     links: TRefLinks;
