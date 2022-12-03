@@ -22,7 +22,7 @@ export const getStaticProps: GetStaticProps = async () => {
         {
             entity: EEntities.blog,
             fields: ETypeFields.preview,
-            variables: { limit: 100 },
+            variables: { limit: 100, order: "sys_publishedAt_DESC" },
         },
     ];
 

@@ -70,27 +70,29 @@ class QueryGenerator {
         result += "}";
         return result;
     }
-    genVariables(variables: TVariables, deep = 0) {
+    genVariables(variables: TVariables, deep = 0, key = "") {
         let str = "";
         if (variables instanceof Object) {
             if (variables instanceof Array) {
                 str += "[";
                 for (const key in variables) {
-                    str += this.genVariables(variables[key], deep + 1);
+                    str += this.genVariables(variables[key], deep + 1, key);
                 }
                 str += "]";
             } else {
                 str += deep ? "{ " : "(";
                 for (const key in variables) {
                     str += key + ": ";
-                    str += this.genVariables(variables[key], deep + 1);
+                    str += this.genVariables(variables[key], deep + 1, key);
                 }
                 str += deep ? " }" : ")";
             }
         } else {
             str +=
                 typeof variables === "string"
-                    ? `"${variables}"`
+                    ? key === "order"
+                        ? `${variables}`
+                        : `"${variables}"`
                     : variables + ", ";
         }
         return str;

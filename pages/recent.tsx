@@ -1,9 +1,9 @@
 import { GetStaticProps } from "next";
-import { TPageGeneric, EEntities, TResponseGeneric } from "../lib/types";
+import { TPageGeneric, EEntities, TPropsGeneric } from "../lib/types";
 import { PageGeneric } from "../components/Pages/PageGeneric";
-import { getEntities } from "../lib/contentful/getEnties";
-import { TSchema } from "../lib/contentful/queryGenerator";
-import { ETypeFields } from "../lib/contentful/queryGenerator";
+import { TSchema, ETypeFields } from "../lib/contentful/queryGenerator";
+import { getStaticPropsWrapper } from "../lib/getStaticProps";
+
 const RecentPosts = (props: TPageGeneric) => <PageGeneric {...props} />;
 export default RecentPosts;
 
@@ -13,28 +13,29 @@ export const getStaticProps: GetStaticProps = async () => {
             entity: EEntities.pages,
             fields: ETypeFields.previewAndBody,
             variables: { where: { slug: "recent" }, limit: 1 },
-            links: [
-                {
-                    entity: EEntities.posts,
-                    fields: ETypeFields.preview,
-                },
-            ],
         },
+        {
+            entity: EEntities.posts,
+            fields: ETypeFields.preview,
+            variables: { limit: 20, order: "sys_publishedAt_DESC" }
+        }
     ];
-    const response: TResponseGeneric = await getEntities({
+
+    const result = await getStaticPropsWrapper({
         schema,
+        handlerData: (data) => {
+            if (!data[EEntities.pages][0]) {
+                return null;
+            }
+            const result: TPropsGeneric = data[EEntities.pages][0];
+
+            result.links = {};
+            result.links[EEntities.posts] = data[EEntities.posts];
+            result.links._all = data[EEntities.posts];
+
+            return result;
+        },
     });
-    const props: TPageGeneric = { data: {}, error: false };
 
-    try {
-        if (response.data[EEntities.pages][0])
-            props.data = response.data[EEntities.pages][0];
-    } catch (err) {
-        props.error = err.message;
-    }
-
-    return {
-        props,
-        revalidate: 24 * 3600,
-    };
+    return result;
 };
