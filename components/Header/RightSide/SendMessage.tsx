@@ -19,7 +19,8 @@ const Container = styled("div")`
         position: relative;
         height: var(--iconHeight);
         width: var(--iconHeight);
-
+        /* fix shifting down in mobile mode width */
+        flex-direction: row;
         .MuiButtonBase-root {
             height: var(--iconHeight);
             width: var(--iconHeight);
