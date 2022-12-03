@@ -5,7 +5,7 @@ import { css } from "styled-components";
  */
 export const ImageStyles = css`
     width: 70%;
-
+    height: 120px;
     ${({ theme }) => theme.breakpoints.up("sm")} {
         width: 70%;
         height: 140px;
