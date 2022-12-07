@@ -29,14 +29,15 @@ export const getStaticProps: GetStaticProps = async () => {
     const result = await getStaticPropsWrapper({
         schema,
         handlerData: (data) => {
-            if (!data[EEntities.pages][0]) {
+            if (!data?.[EEntities.pages]?.items?.[0]) {
                 return null;
             }
-            const result: TPropsGeneric = data[EEntities.pages][0];
+            const result: TPropsGeneric = data[EEntities.pages].items[0];
 
             result.links = {};
-            result.links[EEntities.blog] = data[EEntities.blog];
-            result.links._all = data[EEntities.blog];
+            if (Array.isArray(data?.[EEntities.blog]?.items))
+                result.links[EEntities.blog] = data[EEntities.blog].items;
+            result.links._all = data[EEntities.blog].items;
 
             return result;
         },

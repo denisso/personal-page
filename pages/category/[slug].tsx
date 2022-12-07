@@ -38,10 +38,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
     const result = await getStaticPropsWrapper({
         schema,
         handlerData: (data) => {
-            if (!data[EEntities.category][0]) {
+            if (!data?.[EEntities.category]?.items?.[0]) {
                 return null;
             }
-            return data[EEntities.category][0];
+            return data[EEntities.category].items[0];
         },
     });
 

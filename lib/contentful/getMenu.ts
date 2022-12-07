@@ -9,40 +9,61 @@ const schema: TSchema = [
         entity: EEntities.category,
         fields: ETypeFields.custom,
         fieldsCustom: [
-            { query: "linkedFrom/entryCollection/total", data: null },
-            "title",
-            "slug",
+            {
+                "items/linkedFrom/entryCollection/total": { data: null },
+                items: ["title", "slug"],
+            },
         ],
+    },
+    {
+        entity: EEntities.posts,
+        fields: ETypeFields.custom,
+        fieldsCustom: ["total"],
     },
 ];
 
+export type TMenuResponse = {
+    data?: {
+        menu?: TMenu["menu"];
+        total?: number;
+    };
+    error?: string | boolean;
+};
+
 const variables = {};
 interface IGetMenu {
-    (): Promise<TMenu & { error: string | boolean }>;
+    (): Promise<TMenuResponse>;
 }
 
 const query = queryGenerator.generate(schema);
 
+type THandleResult = {
+    [key: string]: { items: Array<TMenuItem>; total: number };
+};
 export const getMenu: IGetMenu = () => {
     return clientWrapper(
         { query: gql(String.raw`${query}`), variables },
         ({ data, error }: TContentfulResponse) => {
-            const result: TMenu & { error?: string | true } = { menu: [] };
+            const result: TMenuResponse = {};
             if (error) {
                 result.error = error;
                 return result;
             }
-            const menuItems: { [key: string]: Array<TMenuItem> } =
-                handleResponse({
-                    data,
-                    schema,
-                }) as { [key: string]: Array<TMenuItem> };
-
+            const response: THandleResult = handleResponse({
+                data,
+                schema,
+            }) as THandleResult;
+            result.data = {};
             if (
-                Array.isArray(menuItems[EEntities.category]) &&
-                menuItems[EEntities.category]?.length
+                Array.isArray(response?.[EEntities.category]?.items) &&
+                response[EEntities.category].items.length
             ) {
-                result.menu = menuItems[EEntities.category]
+                result.data.menu = response[EEntities.category].items.filter(
+                    (item: TMenuItem) => item?.total
+                );
+            }
+            if (response?.[EEntities.posts]?.total) {
+                result.data.total = response[EEntities.posts].total;
             }
 
             return result;

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export type TState = {
-    articles: number;
+    articles?: number;
 };
 
 const slice = createSlice({

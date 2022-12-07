@@ -27,7 +27,10 @@ export type TEntities = {
 export type TError = string | boolean;
 
 export type THandleResponseResult<T = TPropsGeneric> = {
-    [key: string]: Array<T>;
+    [key: string]: {
+        [key: string]: any;
+        items?: Array<T>;
+    };
 };
 
 export type TResponseGeneric<T = TPropsGeneric> = {

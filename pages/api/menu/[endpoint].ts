@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getMenu } from "../../../lib/contentful/getMenu";
-import { TErrorAPI, EErrorAPI, TMenu } from "../../../lib/types";
+import { getMenu, TMenuResponse } from "../../../lib/contentful/getMenu";
+import { EErrorAPI } from "../../../lib/types";
 import getConfig from "next/config";
 
 interface INextApiRequestEndpoint extends NextApiRequest {
@@ -12,14 +12,14 @@ interface INextApiRequestEndpoint extends NextApiRequest {
     };
 }
 
-type TMenuResponse = TMenu & { error?: TErrorAPI["error"] | string | false };
+
 
 export default async function handler(
     req: INextApiRequestEndpoint,
     res: NextApiResponse<TMenuResponse>
 ) {
     const result: TMenuResponse = {
-        menu: [],
+
     };
     const body = req?.body;
     try {
@@ -36,20 +36,16 @@ export default async function handler(
                         return res.status(200).json(result);
                     }
 
-                    if (serverRuntimeConfig.errorApi !== EErrorAPI.noError) {
-                        result.error = serverRuntimeConfig.errorApi;
-                        return res.status(200).json(result);
-                    }
                     const response = await getMenu();
                     if (response.error) {
                         serverRuntimeConfig.errorApi = EErrorAPI.requestError;
                         result.error = serverRuntimeConfig.errorApi;
                         return res.status(200).json(result);
                     }
+                    serverRuntimeConfig.errorApi = EErrorAPI.noError
+                    serverRuntimeConfig.MENU = {...response.data};
 
-                    serverRuntimeConfig.MENU = [...response.menu];
-
-                    result.menu = serverRuntimeConfig.MENU;
+                    result.data = serverRuntimeConfig.MENU;
                 }
                 break;
             case "getmenu":
@@ -67,16 +63,16 @@ export default async function handler(
                             result.error = serverRuntimeConfig.errorApi;
                             return res.status(200).json(result);
                         }
-                        serverRuntimeConfig.MENU = [...response.menu];
+                        serverRuntimeConfig.MENU = {...response.data};
                     }
-                    result.menu = serverRuntimeConfig.MENU;
+                    result.data = serverRuntimeConfig.MENU;
                     result.error = serverRuntimeConfig.errorApi;
                 }
                 break;
             default:
         }
     } catch (err) {
-        return res.status(500).send({ error: err.message, menu: [] });
+        return res.status(500).send({ error: err.message });
     }
 
     res.status(200).json(result);

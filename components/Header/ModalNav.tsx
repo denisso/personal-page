@@ -1,8 +1,9 @@
 import React from "react";
 import { Modal, useModal } from "../../features/modal";
+import { TMenuResponse } from "../../lib/contentful/getMenu";
 import styled from "styled-components";
 import axios, { AxiosResponse } from "axios";
-import { TMenu, TMenuItem, EEntities } from "../../lib/types";
+import { TMenuItem } from "../../lib/types";
 import Button from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
 import {
@@ -90,8 +91,8 @@ const stateLabels: TStateLabels = {
     Error: "Неудача, Искать снова",
 };
 
-const getMenu = (url: string): Promise<TMenu["menu"]> =>
-    axios.get(url).then(({ data }: AxiosResponse<TMenu>) => data.menu);
+const getMenu = (url: string): Promise<TMenuResponse> =>
+    axios.get(url).then(({ data }: AxiosResponse<TMenuResponse>) => data);
 
 export const ModalNav = () => {
     const { isModalOpen, closeModal } = useModal({ modal: "navMenu" });
@@ -109,17 +110,14 @@ export const ModalNav = () => {
 
     React.useEffect(() => {
         if (data) {
-            itemsCache.current = data;
-            const result = data.reduce(
-                (p, e) => {
-                    if ((e.type as string) === EEntities.category) {
-                        p.articles += e.total;
-                    }
-                    return p;
-                },
-                { articles: 0 }
-            );
-            dispatch(updateState(result));
+            if(Array.isArray(data?.data?.menu)){
+                itemsCache.current = data.data.menu;
+            }
+            
+            if(Number.isInteger(+data?.data?.total)){
+                dispatch(updateState({articles: +data.data.total}));
+            }
+            
             setItems(
                 itemsCache.current.filter((item) =>
                     item.title.includes(filterVal.current)

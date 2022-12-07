@@ -16,9 +16,9 @@ const slice = createSlice({
 
 export const reducerModal = slice.reducer;
 
-export const selectModal = (arg: { modal: keyof TModalHookProps }) => {
+export const selectModal = (arg?: { modal: keyof TModalHookProps }) => {
     return ({modal}: {modal: { current: keyof TModalHookProps }}) => {
-        return modal.current === arg.modal;
+        return modal.current === arg?.modal;
     }
         
 };

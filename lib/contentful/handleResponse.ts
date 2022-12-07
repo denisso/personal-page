@@ -6,10 +6,10 @@ import serialize from "serialize-javascript";
 const getPropsGeneric = ({ data }: { data: any }): TPropsGeneric => {
     const result: TPropsGeneric = {};
     if (data instanceof Object === false) return result;
-    data.sys?.id && (result.id = data.sys.id);
-    data.title && (result.title = data.title);
-    data.subtitle && (result.subtitle = data.subtitle);
-    data.slug && (result.slug = data.slug);
+    if (data.sys?.id) result.id = data.sys.id;
+    if (data.title) result.title = data.title;
+    if (data.subtitle) result.subtitle = data.subtitle;
+    if (data.slug) result.slug = data.slug;
     if (Array.isArray(data.image) && data.image.length) {
         const image: { [key: string]: any } = {};
         if (data.image[0] instanceof Object)
@@ -19,9 +19,9 @@ const getPropsGeneric = ({ data }: { data: any }): TPropsGeneric => {
         result.image.path = image?.public_id;
     }
 
-    data?.sys?.publishedAt && (result.publishedAt = data?.sys?.publishedAt);
-    data?.sys?.firstPublishedAt &&
-        (result.firstPublishedAt = data?.sys?.firstPublishedAt);
+    if (data?.sys?.publishedAt) result.publishedAt = data?.sys?.publishedAt;
+    if (data?.sys?.firstPublishedAt)
+        result.firstPublishedAt = data?.sys?.firstPublishedAt;
     result.type = data?.__typename;
 
     return result;
@@ -33,8 +33,9 @@ type THandleResponseProps = {
 };
 
 interface IHandleResponse<T = TPropsGeneric> {
-    ({ data }: THandleResponseProps): THandleResponseResult<T>;
+    (arg: THandleResponseProps): THandleResponseResult<T>;
 }
+
 export const handleResponse: IHandleResponse = ({
     data,
     schema,
@@ -43,115 +44,302 @@ export const handleResponse: IHandleResponse = ({
     schema: TSchema;
 }) => {
     const result: THandleResponseResult = {};
-
+    if (data instanceof Object === false || !Array.isArray(schema)) {
+        return result;
+    }
     for (const schemaItem of schema) {
         if (!Object.keys(data).find((entity) => entity === schemaItem.entity))
             continue;
-
-        if (!result[schemaItem.entity]) result[schemaItem.entity] = [];
-        const dataItems = data[schemaItem.entity]?.items;
+        if (!result[schemaItem.entity]) {
+            result[schemaItem.entity] = {};
+        }
+        Object.assign(
+            result[schemaItem.entity],
+            getOwnProps({
+                data: data?.[schemaItem.entity],
+                schemaItem,
+                isItems: false,
+            })
+        );
+        const dataItems = data?.[schemaItem.entity]?.items;
         if (Array.isArray(dataItems) && dataItems.length) {
-            for (const data of dataItems) {
+            for (const dataItem of dataItems) {
                 const obj = {};
-                Object.assign(obj, getOwnProps({ data, schemaItem }));
-                Object.assign(obj, getLinksAndRefs({ data, schemaItem }));
-                let sanitizeResult = {};
-                try {
-                    sanitizeResult = JSON.parse(
-                        serialize(obj, { isJSON: true })
-                    );
-                } catch (err) {}
-                result[schemaItem.entity].push(sanitizeResult);
+                Object.assign(
+                    obj,
+                    getOwnProps({ data: dataItem, schemaItem, isItems: true })
+                );
+                Object.assign(
+                    obj,
+                    getLinksAndRefs({ data: dataItem, schemaItem })
+                );
+
+                if (Object.keys(obj).length) {
+                    if (!Array.isArray(result[schemaItem.entity]?.items)) {
+                        result[schemaItem.entity].items = [];
+                    }
+                    let sanitizeResult = {};
+                    try {
+                        sanitizeResult = JSON.parse(
+                            serialize(obj, { isJSON: true })
+                        );
+                    } catch (err) {}
+                    result[schemaItem.entity]?.items?.push(sanitizeResult);
+                }
             }
         }
     }
 
     return result;
 };
+/**
+ * const result = getlastPart("one/two/three/test") // { start: "one", path, last: "test" }
+ * @param str string
+ */
+const getParts = (
+    str: string
+): {
+    isItemFirst: boolean;
+    start: string;
+    pathArray: Array<string>;
+    pathStr: string;
+    last: string;
+    pathNoItems: string;
+} => {
+    const pathArray = str.split("/");
+    const isItemFirst = pathArray[0] === "items";
+    const pathNoItems = isItemFirst
+        ? pathArray.slice(1, pathArray.length).join("/")
+        : pathArray.join("/");
+    return {
+        pathNoItems,
+        isItemFirst,
+        start: pathArray[0],
+        pathArray,
+        pathStr: pathArray.join("/"),
+        last: pathArray[pathArray.length - 1],
+    };
+};
 
+/**
+ * get property by path
+ * const obj = { one: { two: { three: { test: 1 } } } }
+ * const value = getValue("one/two/three/test", obj); // 1
+ * @param path string
+ * @param obj Object
+ */
+const getValue = (path: string, obj: { [key: string]: any }) => {
+    if (typeof path !== "string") return undefined;
+    const safePath = path[0] === "/" ? path.slice(1, path.length) : path;
+    return safePath.split("/").reduce((acc, c) => acc && acc[c], obj);
+};
+
+/**
+ *
+ * const value = createObj("one/two/three", { hello: "world" });
+ * result:
+ * { one: { two: { three: { hello: 'world' } } } }
+ * @param path string
+ * @param arg Object
+ */
+const createObj = (path: string, arg?: { [key: string]: any }) => {
+    const result: { [key: string]: any } = {};
+    if (typeof path !== "string" && arg instanceof Object === false) {
+        return result;
+    }
+    if (path === "" && arg instanceof Object) {
+        return arg;
+    }
+    path.split("/").reduce((acc, c, i, arr) => {
+        const obj = i === arr.length - 1 && arg instanceof Object ? arg : {};
+        acc[c] = obj;
+        return obj;
+    }, result);
+
+    return result;
+};
 function getOwnProps({
     data,
     schemaItem,
+    isItems,
 }: {
     data: any;
     schemaItem: TSchemaItem;
+    isItems?: boolean;
 }) {
+    /**
+     * { [key: string]: any } for custom props
+     */
     const result: TPropsGeneric & { [key: string]: any } = {};
 
-    if (schemaItem.entity !== data.__typename) {
+    if (!data.__typename.includes(schemaItem.entity)) {
         return result;
     }
     result.type = data.__typename;
-    if (schemaItem?.fields !== ETypeFields.custom) {
-        Object.assign(result, getPropsGeneric({ data }));
-    }
-    if (schemaItem?.fields === ETypeFields.previewAndBody) {
-        data?.body && (result.body = convertMarkdownToHtml(data?.body));
+    if (isItems) {
+        if (schemaItem?.fields !== ETypeFields.custom) {
+            Object.assign(result, getPropsGeneric({ data }));
+        }
+        if (schemaItem?.fields === ETypeFields.previewAndBody) {
+            if (data.body) result.body = convertMarkdownToHtml(data.body);
+        }
     }
 
     if (schemaItem?.fieldsCustom?.length) {
         for (const field of schemaItem.fieldsCustom) {
             /**
-             * case fieldsCustom: ["slug"]
+             * case fieldsCustom: ["slug"] can be "oneword" or path "word1/word2"
              */
-            if (typeof field === "string") result[field] = data[field];
-
-            /**
-             * case 
-            fieldsCustom: [{
-                query: string; // can be "oneword" or path "word1/word2"
-                dataPath?: string; // can be "oneword"
-                data: Array<string>| null;
-             }]
-             */
-            if (field instanceof Object) {
-                const obj: { [key: string]: any } = {};
-                let res: any = {};
-                if (typeof field.query === "string") {
-                    /**
-                     * follow the path in the query
-                     * case [{query: "linkedFrom/entryCollection/total", ...}]
-                     */
-                    res = field.query
-                        .split("/")
-                        .reduce(
-                            (p: any, e: string) =>
-                                p instanceof Object && p[e] && p[e]
-                                    ? p[e]
-                                    : undefined,
-                            data
-                        );
-                }
-                /**
-                 * case fieldsCustom: [{... data: ["hello", "short"]}]
-                 * every field from data put to result
-                 */
-                if (field.data?.length && res instanceof Object) {
-                    for (const fname of field.data) {
-                        if (res[fname]) obj[fname] = res[fname];
+            if (typeof field === "string") {
+                const { start, last, pathNoItems } = getParts(field);
+                if (
+                    (start === "items" && isItems) ||
+                    (start !== "items" && !isItems)
+                ) {
+                    const val = getValue(pathNoItems, data);
+                    if (val) {
+                        result[last] = val;
                     }
                 }
-                /**
-                 * case [{query: "linkedFrom/entryCollection/total", data: null}]
-                 * result.total = value from query(linkedFrom/entryCollection/total)
-                 */
-                if (field.data === null && res) {
-                    const arr = field.query.split("/");
+            }
 
-                    obj[arr[arr.length - 1]] = res;
-                }
-                if (field.dataPath) {
+            /**
+              case 
+              fieldsCustom: [{
+                  [key:string]: // can be "oneword" or path "word1/word2"
+                  {
+                    dataPath?: string; // can be "oneword" or path "word1/word2"
+                    data: Array<string>| null;
+                  } | Array<string>;
+               }]
+               */
+            if (field instanceof Object) {
+                for (const [fieldKey, fieldValue] of Object.entries(field)) {
+                    const { start, pathNoItems } = getParts(fieldKey);
+                    if (
+                        (start !== "items" && isItems) ||
+                        (start === "items" && !isItems)
+                    ) {
+                        continue;
+                    }
                     /**
-                     * case fieldsCustom: [{..., path: "json",...]}]
-                     * result.json = obj
-                     */
-                    result[field.dataPath] = obj;
-                } else {
-                    /**
-                     * without path: put data to result root
-                     * case fieldsCustom: [{query: "json", data: ["hello", "short"]}]
-                     */
-                    Object.assign(result, obj);
+              case 
+              fieldsCustom: [{
+                  [fieldKey:string]: Array<string>;
+               }]
+            */
+                    if (Array.isArray(fieldValue)) {
+                        for (const val of fieldValue) {
+                            if (
+                                (start === "items" && isItems) ||
+                                (start !== "items" && !isItems)
+                            ) {
+                                result[val] = getValue(
+                                    pathNoItems + "/" + val,
+                                    data
+                                );
+                            }
+                        }
+                    } else if (fieldValue instanceof Object) {
+                        /**
+              case 
+              fieldsCustom: [{
+                  [fieldKey:string]: {
+                    dataPath?: string; // can be "oneword"
+                    data: Array<string>| null;
+                  }
+               }]
+              */
+
+                        if (Array.isArray(fieldValue.data)) {
+                            //   fieldsCustom: [{
+                            //     [fieldKey:string]: {
+                            //       dataPath?: string;
+                            //       data: Array<string>;
+                            //     }
+                            //  }]
+
+                            for (const val of fieldValue.data) {
+                                if (typeof val === "string") {
+                                    if (
+                                        typeof fieldValue.dataPath === "string"
+                                    ) {
+                                        if (
+                                            (start === "items" && isItems) ||
+                                            (start !== "items" && !isItems)
+                                        ) {
+                                            Object.assign(
+                                                result,
+                                                createObj(fieldValue.dataPath, {
+                                                    [val]: getValue(
+                                                        pathNoItems + "/" + val,
+                                                        data
+                                                    ),
+                                                })
+                                            );
+                                        }
+                                    } else {
+                                        if (
+                                            (start === "items" && isItems) ||
+                                            (start !== "items" && !isItems)
+                                        ) {
+                                            result[val] = getValue(
+                                                pathNoItems + "/" + val,
+                                                data
+                                            );
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            if (typeof fieldValue.dataPath === "string") {
+                                //   fieldsCustom: [{
+                                //     [fieldKey:string]: {
+                                //       dataPath?: string;
+                                //       data: null;
+                                //     }
+                                //  }]
+                                if (
+                                    (start === "items" && isItems) ||
+                                    (start !== "items" && !isItems)
+                                ) {
+                                    const path = fieldValue.dataPath.split("/");
+                                    Object.assign(
+                                        result,
+                                        createObj(fieldValue.dataPath, {
+                                            [path[path.length - 1]]: getValue(
+                                                pathNoItems,
+                                                data
+                                            ),
+                                        })
+                                    );
+                                }
+                            } else {
+                                //   fieldsCustom: [{
+                                //     [fieldKey:string]: {
+                                //       dataPath?: null;
+                                //       data: null;
+                                //     }
+                                //  }]
+                                if (
+                                    (start === "items" && isItems) ||
+                                    (start !== "items" && !isItems)
+                                ) {
+                                    const path = fieldKey.split("/");
+                                    result[path[path.length - 1]] = getValue(
+                                        pathNoItems,
+                                        data
+                                    );
+                                }
+                            }
+                        }
+                    } else {
+                        /**
+               fieldsCustom: [{
+                  [key:string]: null;
+               }]
+               */
+                    }
                 }
             }
         }
@@ -179,6 +367,7 @@ function getLinksOrRefs({
                 const res = getOwnProps({
                     data: entity,
                     schemaItem: entitySchema,
+                    isItems: true,
                 });
                 if (res.type) {
                     if (!Array.isArray(result[type][res.type]))
@@ -189,7 +378,7 @@ function getLinksOrRefs({
                         res,
                         getLinksAndRefs({
                             data: entity,
-                            schema: entitySchema,
+                            schemaItem: entitySchema,
                         })
                     );
                     result[type]._all.push(res);
@@ -200,7 +389,13 @@ function getLinksOrRefs({
     return result;
 }
 
-function getLinksAndRefs({ data, schemaItem }: any) {
+function getLinksAndRefs({
+    data,
+    schemaItem,
+}: {
+    data: any;
+    schemaItem: TSchemaItem;
+}) {
     const result: {
         refs?: { [key: string]: any };
         links?: { [key: string]: any };

@@ -5,7 +5,6 @@ import { TSchema, ETypeFields } from "../lib/contentful/queryGenerator";
 import { EEntities } from "../lib/types";
 import { getStaticPropsWrapper } from "../lib/getStaticProps";
 const HomePage = (props: TPageHome): JSX.Element => {
-
     return (
         <Layout
             title={props?.data?.title as string}
@@ -23,20 +22,19 @@ export async function getStaticProps() {
         {
             entity: EEntities.pages,
             fields: ETypeFields.previewAndBody,
-            fieldsCustom: [{ query: "json", data: ["hello", "short"] }],
+            fieldsCustom: [{ "items/json": { data: ["hello", "short"] } }],
             variables: { where: { slug: "/" } },
         },
     ];
-    
+
     const result = await getStaticPropsWrapper({
         schema,
         handlerData: (data) => {
-            if (!data[EEntities.pages][0]) {
+            if (!data[EEntities.pages]?.items?.[0]) {
                 return null;
             }
-            return data[EEntities.pages][0];
+            return data[EEntities.pages]?.items?.[0];
         },
     });
-
     return result;
 }

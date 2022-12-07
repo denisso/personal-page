@@ -10,7 +10,7 @@ export type TModalHookProps = {
     search: "Поиск по сайту";
 };
 
-export const useModal = (arg: { modal: keyof TModalHookProps }) => {
+export const useModal = (arg?: { modal: keyof TModalHookProps }) => {
     const isModalOpen: boolean = useSelector(selectModal(arg));
     const dispatch = useDispatch();
     const closeModal = React.useCallback(() => {

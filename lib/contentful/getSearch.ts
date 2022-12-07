@@ -48,11 +48,8 @@ export const getSearch: IGetSearch = ({ search, skip = null, limit = 20 }) => {
             }
             const response = handleResponse({ data, schema });
             try {
-                if (
-                    response[EEntities.posts] &&
-                    Array.isArray(response[EEntities.posts])
-                ) {
-                    result.data = response[EEntities.posts];
+                if (Array.isArray(response?.[EEntities.posts]?.items)) {
+                    result.data = response?.[EEntities.posts]?.items;
                 }
             } catch (err) {
                 result.error = err.message;

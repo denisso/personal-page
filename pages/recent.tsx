@@ -17,21 +17,22 @@ export const getStaticProps: GetStaticProps = async () => {
         {
             entity: EEntities.posts,
             fields: ETypeFields.preview,
-            variables: { limit: 20, order: "sys_publishedAt_DESC" }
-        }
+            variables: { limit: 20, order: "sys_publishedAt_DESC" },
+        },
     ];
 
     const result = await getStaticPropsWrapper({
         schema,
         handlerData: (data) => {
-            if (!data[EEntities.pages][0]) {
+            if (!data?.[EEntities.pages]?.items?.[0]) {
                 return null;
             }
-            const result: TPropsGeneric = data[EEntities.pages][0];
+            const result: TPropsGeneric = data[EEntities.pages].items[0];
 
             result.links = {};
-            result.links[EEntities.posts] = data[EEntities.posts];
-            result.links._all = data[EEntities.posts];
+            if (Array.isArray(data?.[EEntities.posts]?.items))
+                result.links[EEntities.posts] = data[EEntities.posts].items;
+            result.links._all = data[EEntities.posts].items;
 
             return result;
         },
