@@ -22,14 +22,14 @@ const Container = styled("div")<{ direction: TFormProps["direction"] }>`
     flex-direction: ${({ direction }) => direction};
     align-items: ${({ direction }) =>
         direction === "row" ? "center" : "stretch"};
-
-    .Body {
-        padding-top: 1rem;
+    gap: 1rem;
+    .Input {
         flex-grow: 1;
         flex-shrink: 1;
-        overflow-y: auto;
+        overflow-y: visible;
+        z-index: 100;
     }
-    .Footer {
+    .Control {
         flex-shrink: 0;
     }
 `;
@@ -57,10 +57,10 @@ export const Form: IForm = ({
         >
             <FForm className={className}>
                 <Container direction={direction}>
-                    <div className="Body">
+                    <div className="Input">
                         <Fields fields={fields} />
                     </div>
-                    <div className="Footer">{children}</div>
+                    <div className="Control">{children}</div>
                 </Container>
             </FForm>
         </Formik>

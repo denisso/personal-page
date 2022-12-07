@@ -66,6 +66,7 @@ const ModalStyled = styled(Modal)`
         flex: 1;
         overflow-y: hidden;
         .List {
+            margin-top: .5rem;
             overflow-y: auto;
             height: 100%;
         }
