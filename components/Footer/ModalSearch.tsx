@@ -92,16 +92,7 @@ const searchRequest: ISearchRequest = (search, token) => {
     });
 };
 
-const schema: TSchema = [
-    {
-        text: {
-            name: "search",
-            label: "Строка поиска",
-            autoFocus: true,
-            rules: { required: true, min: 4 },
-        },
-    },
-];
+
 
 type TFormValues = {
     search: string;
@@ -120,6 +111,17 @@ export const ModalSearch = () => {
         ESubmitStates.Initial
     );
     const [search, setSearch] = React.useState<string>("")
+    const schema: TSchema = [
+        {
+            text: {
+                name: "search",
+                label: "Строка поиска",
+                autoFocus: true,
+                rules: { required: true, min: 4 },
+                value: search
+            },
+        },
+    ];
     const onSubmit = React.useCallback(
         (values: TFormValues, { setStatus }: FormikHelpers<TFormValues>) => {
             setStatus({ disabled: true });
@@ -164,7 +166,7 @@ export const ModalSearch = () => {
                         </Button>
                     </div>
                 </Form>
-                <div className="Info">Всего: {articles.articles} / По запросу: {search} найдено: {result.length}</div>
+                <div className="Info">Всего: {articles.articles} найдено: {result.length} Запрос: {search} </div>
             </div>
 
             <div className="Result">
