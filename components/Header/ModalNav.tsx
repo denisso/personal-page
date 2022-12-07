@@ -66,22 +66,12 @@ const ModalStyled = styled(Modal)`
         flex: 1;
         overflow-y: hidden;
         .List {
-            margin-top: .5rem;
+            margin-top: 0.5rem;
             overflow-y: auto;
             height: 100%;
         }
     }
 `;
-
-const schema: TSchema = [
-    {
-        text: {
-            name: "filter",
-            label: "Фильтр меню",
-            autoFocus: true,
-        },
-    },
-];
 
 type TFormValues = {
     filter: string;
@@ -100,8 +90,22 @@ export const ModalNav = () => {
     const [stateSubmit, setStateSubmit] = React.useState<ESubmitStates>(
         ESubmitStates.Initial
     );
-    const itemsCache = React.useRef<Array<TMenuItem>>([]);
-    const filterVal = React.useRef<string>("");
+    const cache = React.useRef<{
+        menu: Array<TMenuItem>;
+        filter: string;
+        articles: number;
+    }>({ menu: [], filter: "", articles: 0 });
+
+    const schema: TSchema = [
+        {
+            text: {
+                name: "filter",
+                label: "Фильтр меню",
+                autoFocus: true,
+                value: cache.current.filter,
+            },
+        },
+    ];
     const [items, setItems] = React.useState<Array<TMenuItem>>([]);
     const dispatch = useDispatch();
 
@@ -111,17 +115,18 @@ export const ModalNav = () => {
 
     React.useEffect(() => {
         if (data) {
-            if(Array.isArray(data?.data?.menu)){
-                itemsCache.current = data.data.menu;
+            if (Array.isArray(data?.data?.menu)) {
+                cache.current.menu = data.data.menu;
             }
-            
-            if(Number.isInteger(+data?.data?.total)){
-                dispatch(updateState({articles: +data.data.total}));
+
+            if (Number.isInteger(+data?.data?.total)) {
+                cache.current.articles = +data.data.total;
+                dispatch(updateState({ articles: +data.data.total }));
             }
-            
+
             setItems(
-                itemsCache.current.filter((item) =>
-                    item.title.includes(filterVal.current)
+                cache.current.menu.filter((item) =>
+                    item.title.includes(cache.current.filter)
                 )
             );
         }
@@ -129,15 +134,16 @@ export const ModalNav = () => {
     const onSubmit = React.useCallback(
         ({ filter }: TFormValues) => {
             // submit
-            filterVal.current = filter;
+            cache.current.filter = filter;
+
             if (filter.trim() !== "") {
                 setItems(
-                    itemsCache.current.filter((item) =>
+                    cache.current.menu.filter((item) =>
                         item.title.toLowerCase().includes(filter.toLowerCase())
                     )
                 );
             } else {
-                setItems(itemsCache.current);
+                setItems(cache.current.menu);
             }
         },
         [setItems]
@@ -166,6 +172,10 @@ export const ModalNav = () => {
                         </Button>
                     </div>
                 </Form>
+            </div>
+            <div className="State">
+                Категории: {cache.current.menu.length} Статьи:{" "}
+                {cache.current.articles} Текущий фильтр: {cache.current.filter}
             </div>
             <div className="Items">
                 <div className="List">
