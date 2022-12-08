@@ -3,10 +3,13 @@ import Link from "@mui/material/Link";
 import Tooltip from "@mui/material/Tooltip";
 import styled from "styled-components";
 import Cyberforum from "../../assets/cyberforum.svg";
+import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import Envelope from "@mui/icons-material/MailOutline";
 import GitHub from "@mui/icons-material/GitHub";
 import TelegramIcon from "@mui/icons-material/Telegram";
-
+import SvgIcon from "@mui/material/SvgIcon";
+import { useDispatch } from "react-redux";
+import { openModal } from "../../features/modal";
 type TypeIconContainer = {
     color?: string;
     width?: number;
@@ -14,9 +17,7 @@ type TypeIconContainer = {
 };
 
 type PropsLink = {
-    icon:
-        | React.ComponentType<React.HTMLAttributes<HTMLOrSVGElement>>
-        | typeof Envelope;
+    icon: typeof SvgIcon;
     title: string;
     href: string;
 } & TypeIconContainer;
@@ -59,12 +60,13 @@ const IconContainer = styled("div")<TypeIconContainer>`
         width ? `calc(var(--iconHeight) * ${width})` : "var(--iconHeight)"};
     height: ${({ height }) =>
         height ? `calc(var(--iconHeight) * ${height})` : "var(--iconHeight)"};
-    & .image {
+    & .Icon {
         fill: ${({ color }) => color};
         color: ${({ color }) => color};
         align-items: center;
         width: 100%;
         height: auto;
+        cursor: pointer;
     }
 `;
 
@@ -74,31 +76,31 @@ const CustomLink = ({ link, color }: { link: string; color: string }) => {
         setClient(true);
     }, []);
 
-    const Icon = links[link].icon;
+    const Icon = links[link].icon as typeof SvgIcon;
 
     return client ? (
         <Tooltip title={links[link].title}>
-            <Link href={links[link].href} className="anchor" target="_blank">
+            <Link href={links[link].href} className="Anchor" target="_blank">
                 <IconContainer
                     width={links[link].width}
                     height={links[link].height}
                     color={color}
                 >
-                    <Icon className="image" />
+                    <Icon className="Icon" />
                 </IconContainer>
             </Link>
         </Tooltip>
     ) : (
         <Link
             href={links[link].href}
-            className="anchor"
+            className="Anchor"
             target="_blank"
             {...(!client && {
                 title: links[link].title,
             })}
         >
-            <div className="icon">
-                <Icon className="image" />
+            <div className="IconContainer">
+                <Icon className="Icon" />
             </div>
         </Link>
     );
@@ -110,6 +112,20 @@ const Container = styled("div")`
     gap: 1rem;
     align-items: center;
 `;
+
+const FormSendMessageButton = ({ color }: { color: string }) => {
+    const dispatch = useDispatch()
+    const senmessage = () => {
+        dispatch(openModal({ modal: "sendMassage" }));
+    }
+    return (
+        <Tooltip title={"Отправить форму"}>
+            <IconContainer color={color} width={1.3} height={1.3} onClick={senmessage}>
+                <AssignmentOutlinedIcon className="Icon" />
+            </IconContainer>
+        </Tooltip>
+    );
+};
 
 export const LinksProfiles = ({
     className,
@@ -123,6 +139,7 @@ export const LinksProfiles = ({
             {Object.keys(links).map((link) => (
                 <CustomLink key={link} link={link} color={color} />
             ))}
+            <FormSendMessageButton color={color} />
         </Container>
     );
 };
