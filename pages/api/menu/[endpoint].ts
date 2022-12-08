@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getMenu, TMenuResponse } from "../../../lib/contentful/getMenu";
 import { EErrorAPI } from "../../../lib/types";
 import getConfig from "next/config";
+import { reqValidation } from "../../../lib/helpersAPI";
 
 interface INextApiRequestEndpoint extends NextApiRequest {
     query: {
@@ -11,8 +12,6 @@ interface INextApiRequestEndpoint extends NextApiRequest {
         token?: string;
     };
 }
-
-
 
 export default async function handler(
     req: INextApiRequestEndpoint,
@@ -27,13 +26,11 @@ export default async function handler(
         switch (req?.query?.endpoint) {
             case "revalidate":
                 {
-                    if (!process.env.SECURITY_TOKEN) {
-                        result.error = "the security token not set";
-                        return res.status(200).json(result);
-                    }
-                    if (body?.token !== process.env.SECURITY_TOKEN) {
-                        result.error = "the security token is incorrect";
-                        return res.status(200).json(result);
+                    const reqValid = reqValidation(req);
+                    if (reqValid.error !== EErrorAPI.noError) {
+                        return res
+                            .status(reqValid.status)
+                            .send({ error: reqValid.error });
                     }
 
                     const response = await getMenu();
@@ -63,6 +60,7 @@ export default async function handler(
                             result.error = serverRuntimeConfig.errorApi;
                             return res.status(200).json(result);
                         }
+                        serverRuntimeConfig.errorApi = serverRuntimeConfig.noError;
                         serverRuntimeConfig.MENU = {...response.data};
                     }
                     result.data = serverRuntimeConfig.MENU;

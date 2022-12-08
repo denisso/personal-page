@@ -1,19 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { TErrorAPI, EErrorAPI } from "../../../lib/types";
-import getConfig from "next/config";
-
+import { reqValidation } from "../../../lib/helpersAPI";
 interface INextApiRequestEndpoint extends NextApiRequest {
     query: {
         endpoint: string;
     };
     body: {
         token?: string;
-        data: string;
+        path: string;
     };
 }
 
 type TResponse = {
-    result?: { [key: string]: any };
+    data?: string;
     error?: TErrorAPI["error"] | string | false;
 };
 
@@ -21,47 +20,40 @@ export default async function handler(
     req: INextApiRequestEndpoint,
     res: NextApiResponse<TResponse>
 ) {
-    const result: TResponse = {};
+    const result: TResponse = { data: "" };
     const body = req?.body;
     try {
-        const { serverRuntimeConfig } = getConfig();
         switch (req?.query?.endpoint) {
             case "revalidate":
                 {
-                    if (!process.env.SECURITY_TOKEN) {
-                        result.error = "the security token not set";
-                        return res.status(200).json(result);
+                    const reqValid = reqValidation(req);
+                    if (reqValid.error !== EErrorAPI.noError) {
+                        return res
+                            .status(reqValid.status)
+                            .send({ error: reqValid.error });
                     }
-                    if (body?.token !== process.env.SECURITY_TOKEN) {
-                        result.error = "the security token is incorrect";
-                        return res.status(200).json(result);
+
+                    if (
+                        typeof body?.path !== "string" ||
+                        !Array.isArray(body?.path)
+                    ) {
+                        return res
+                            .status(402)
+                            .send({
+                                error: "path not string || Array || undefined",
+                            });
                     }
-                    if (serverRuntimeConfig.errorApi === EErrorAPI.noError) {
-                        // logic here
-                        const entities = JSON.parse(body.data);
-                        for (const entity in entities) {
-                            result[entity] = [];
-                            if (Array.isArray(entities[entity])) {
-                                for (const slug of entities[entity]) {
-                                    try {
-                                        await res.revalidate(
-                                            `/${entity.toLowerCase()}/${slug.toLowerCase()}`
-                                        );
-                                        result[entity].push({ [slug]: true });
-                                    } catch (err) {
-                                        result[entity].push({ [slug]: false });
-                                    }
-                                }
-                            } else {
-                                return res
-                                    .status(500)
-                                    .send({ error: "entity key not array" });
+
+                    if (typeof body?.path !== "string") {
+                        res.revalidate(body?.path);
+                        result.data = `${body?.path} revalidated`;
+                    } else {
+                        for (const path of body?.path) {
+                            if (typeof path === "string") {
+                                await res.revalidate(path);
+                                result.data += `${body?.path} revalidated, `;
                             }
                         }
-                    } else {
-                        return res
-                            .status(500)
-                            .send({ error: serverRuntimeConfig.errorApi });
                     }
                 }
                 break;
