@@ -86,15 +86,18 @@ const Content = styled("div")`
 `;
 
 const ImageLazyComponent = ({ src, alt }: JSX.IntrinsicElements["img"]) => (
-    <LoadingLazy
-        className="LoadingLazy"
-        variant="rounded"
-    >
-        <ImageLazy src={src} alt={alt} className="ImageLazy"/>
+    <LoadingLazy className="LoadingLazy" variant="rounded">
+        <ImageLazy src={src} alt={alt} className="ImageLazy" />
     </LoadingLazy>
 );
 
-export const HTML = ({ html }: { html: string }) => {
+export const HTML = ({
+    html,
+    components,
+}: {
+    html: string;
+    components?: { [key: string]: React.ReactNode };
+}) => {
     let result = <></>;
     try {
         result = unified()
@@ -102,6 +105,7 @@ export const HTML = ({ html }: { html: string }) => {
             .use(rehypeReact, {
                 createElement: React.createElement,
                 components: {
+                    ...components,
                     img: ImageLazyComponent,
                 },
             })
@@ -113,12 +117,14 @@ export const HTML = ({ html }: { html: string }) => {
 export const Markdown = ({
     content,
     className,
+    components
 }: {
     content?: string;
     className?: string;
+    components?: { [key: string]: React.ReactNode };
 }) => {
     if (typeof content !== "string") return <></>;
     return (
-        <Content className={className}>{HTML({ html: content || "" })}</Content>
+        <Content className={className}>{HTML({ html: content || "", components })}</Content>
     );
 };

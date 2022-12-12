@@ -2,28 +2,14 @@ import * as React from "react";
 import Backdrop from "@mui/material/Backdrop";
 import { default as ModalMUI } from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 type TModalProps = {
     children: React.ReactNode;
     open: boolean;
     className?: boolean;
 };
 
-const Container = styled("div")`
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1300;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    ${({ theme }) => theme.breakpoints.down("sm")} {
-        height: 100%;
-    }
-    .DefaultStyles {
+export const modalDefaultStyle = css`
         transition: width var(--transition);
         padding: 1rem;
         background-color: ${({ theme }) => theme.palette.colorRoot};
@@ -45,6 +31,24 @@ const Container = styled("div")`
         ${({ theme }) => theme.breakpoints.up("xl")} {
             width: 1000px;
         }
+`;
+
+const Container = styled("div")`
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1300;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    ${({ theme }) => theme.breakpoints.down("sm")} {
+        height: 100%;
+    }
+    .DefaultStyle {
+        ${modalDefaultStyle}
     }
 `;
 export const Modal = ({ children, open, className }: TModalProps) => {
@@ -64,7 +68,7 @@ export const Modal = ({ children, open, className }: TModalProps) => {
                     <Container className="Container">
                         <div
                             className={`InnerBlock${
-                                className ? className : " DefaultStyles"
+                                className ? className : " DefaultStyle"
                             }`}
                         >
                             {children}

@@ -22,7 +22,7 @@ export const ImageStyles = css`
         width: 30%;
         height: 240px;
     }
-    margin: 0 auto;
+
     border-radius: 0.5rem;
     overflow: hidden;
 `;

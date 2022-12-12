@@ -8,6 +8,7 @@ export type TModalHookProps = {
     sendMassage: "Отправить сообщение автору";
     chooseHeader: "Выбор заголовка содержимого";
     search: "Поиск по сайту";
+    modalTOC: "Модальное окно для работы с оглавлениес";
 };
 
 export const useModal = (arg?: { modal: keyof TModalHookProps }) => {

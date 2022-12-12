@@ -2,20 +2,18 @@ import React from "react";
 import { Markdown } from "../Service/Markdown";
 import { TPageGeneric } from "../../lib/types";
 import styled from "styled-components";
-import { DateCreateUpdate } from "../Elements/DateCreateUpdate";
-import { EntitiesRefs } from "../Elements/EntitiesRefs";
 import { EntitiesLinks } from "../Elements/EntitiesLinks";
 import { FallbackError } from "../Elements/FallbackError";
 import Layout from "../Layout";
-import { ImageLazy } from "../Elements/LoadingLazy/ImageLazy";
-import { LoadingLazy } from "../Elements/LoadingLazy";
 import { useRouter } from "next/router";
 import { FallbackLoading } from "../Elements/FallbackLoading";
 import { ImageStyles } from "./GenericStyles";
+import {HeaderBlock} from "./_Parts/HeaderBlock"
 const Container = styled("div")`
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    
     .Header {
         display: flex;
         align-items: center;
@@ -25,14 +23,7 @@ const Container = styled("div")`
             font-size: 2.5rem;
         }
     }
-    .PageImage {
-        ${ImageStyles}
-    }
-    .BeforeBody {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+
     .Body {
         background: ${({ theme }) => theme.palette.color1[300]};
         padding: 0.5rem;
@@ -51,25 +42,7 @@ export const Component = ({ data }: TPageGeneric) => {
                 <span className="Sign">✍️</span> {data?.title}
             </h1>
 
-            {data?.image && (
-                <LoadingLazy className="PageImage" variant="rounded">
-                    <ImageLazy
-                        path={data?.image?.path}
-                        alt="Title image"
-                        width={600}
-                    />
-                </LoadingLazy>
-            )}
-            <div className="BeforeBody">
-                <DateCreateUpdate
-                    publishedAt={data?.publishedAt}
-                    firstPublishedAt={data?.firstPublishedAt}
-                    hidden={data?.type === "category"}
-                />
-                <EntitiesRefs
-                    refs={data?.refs instanceof Object && data?.refs?._all}
-                />
-            </div>
+            <HeaderBlock data={data}/>
 
             {data?.body && (
                 <section className="Body">

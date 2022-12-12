@@ -15,6 +15,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "netlify/functions/send-contact-email.js"],
+  "include": ["next-env.d.ts", "typings.d.ts", "netlify/functions/send-contact-email.js"],
   "exclude": ["node_modules"]
 }
