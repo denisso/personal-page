@@ -14,7 +14,7 @@ import { openModal } from "../../features/modal";
 import slugify from "slugify";
 import { PostContext, THeadingElement } from "./Post/PostContext";
 import { Button } from "@mui/material";
-import {HeaderBlock} from "./_Parts/HeaderBlock"
+import { HeaderBlock } from "./_Parts/HeaderBlock";
 const Container = styled("div")`
     display: flex;
     flex-direction: column;
@@ -78,11 +78,13 @@ const getCurrentheader: IgetCurrentheader = ({
     let indexTop = indexTopPrev;
     if (!Array.isArray(headers)) return indexTop;
     let prevTop = 0;
-
+    if (headers[headers.length - 1]?.element?.getBoundingClientRect()?.y < 0) {
+        return headers.length - 1;
+    }
     for (let indx = 0; indx < headers.length; indx++) {
-        const rect = headers[indx].element.getBoundingClientRect();
+        const rect = headers[indx]?.element?.getBoundingClientRect();
         const clientHeight = document.documentElement.clientHeight;
-
+        if (!rect) continue;
         if (rect.y >= topOffset && rect.y < clientHeight) {
             indexTop = indx;
             break;
@@ -178,7 +180,7 @@ export const Component = ({ data }: TPageGeneric) => {
             <h1 className="Header">
                 <span className="Sign">✍️</span> {data?.title}
             </h1>
-            <HeaderBlock data={data}/>
+            <HeaderBlock data={data} />
 
             {data?.body && (
                 <section className="Body">
