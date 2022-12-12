@@ -1,6 +1,23 @@
 import { createTheme } from "@mui/material/styles";
 import { grey, blue, blueGrey, indigo } from "@mui/material/colors";
 import { reverseColors } from "./themeUtils";
+import { stylizeMuiButton } from "./Components/Button";
+import { stylizeMuiInput } from "./Components/Input";
+export const colors: TColors = {
+    colorRoot: "white",
+    color1: grey,
+    color2: blue,
+    color3: blueGrey,
+    color4: indigo,
+};
+
+export const colorsDark: TColors = {
+    colorRoot: "gray",
+    color1: reverseColors(colors.color1),
+    color2: reverseColors(colors.color2),
+    color3: reverseColors(colors.color3),
+    color4: reverseColors(colors.color4),
+};
 
 export interface IBreakPoints {
     xs1: any;
@@ -54,7 +71,8 @@ export type TColor = {
     [key: string]: string;
 };
 
-type TColors = {
+export type TColors = {
+    colorRoot: string;
     color1: TColor;
     color2: TColor;
     color3: TColor;
@@ -64,24 +82,16 @@ type TColors = {
 export interface IColors {
     colorRoot: string;
     colorText: string;
-
     color1: TColor;
     color2: TColor;
     color3: TColor;
     color4: TColor;
 }
 
-const colors: TColors = {
-    color1: grey,
-    color2: blue,
-    color3: blueGrey,
-    color4: indigo,
-};
-
 export const light = createTheme({
     palette: {
         mode: "light",
-        colorRoot: "white",
+        colorRoot: colors.colorRoot,
         colorText: colors.color1[900],
         color1: colors["color1"],
         color2: colors["color2"],
@@ -89,18 +99,16 @@ export const light = createTheme({
         color4: colors["color4"],
     },
     ...style,
+    components: {
+        ...stylizeMuiButton(colors),
+        ...stylizeMuiInput(colors)
+    },
 });
 
-const colorsDark: TColors = {
-    color1: reverseColors(colors.color1),
-    color2: reverseColors(colors.color2),
-    color3: reverseColors(colors.color3),
-    color4: reverseColors(colors.color4),
-};
 export const dark = createTheme({
     palette: {
         mode: "dark",
-        colorRoot: "gray",
+        colorRoot: colorsDark.colorRoot,
         colorText: colorsDark.color1[900],
         color1: colorsDark.color1,
         color2: colorsDark.color2,
@@ -108,4 +116,8 @@ export const dark = createTheme({
         color4: colorsDark.color4,
     },
     ...style,
+    components: {
+        ...stylizeMuiButton(colorsDark),
+        ...stylizeMuiInput(colorsDark)
+    },
 });
