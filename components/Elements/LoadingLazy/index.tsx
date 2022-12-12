@@ -38,7 +38,7 @@ export const LoadingLazy = ({
 }: TLoadingLazyProps) => {
     const [client, setClient] = React.useState(false);
     const ref = React.useRef<Element>();
-    const { addNode } = React.useContext(Context);
+    const { addElement } = React.useContext(Context);
     const [state, setState] = React.useState(SNotIntersected);
     const unbserve = React.useRef(null);
     React.useEffect(() => {
@@ -84,10 +84,10 @@ export const LoadingLazy = ({
             <Container
                 /* class set only height, i do not make prop height because css more useful with media queries */
                 className={className}
-                ref={(node) => {
-                    if (node && !ref.current) {
-                        ref.current = node;
-                        unbserve.current = addNode({ node, trigger });
+                ref={(element) => {
+                    if (element && !ref.current) {
+                        ref.current = element;
+                        unbserve.current = addElement({ element, trigger });
                     }
                 }}
             >

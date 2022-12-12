@@ -19,7 +19,7 @@ export default function MyApp({
 }: AppProps<React.ComponentPropsWithoutRef<typeof Header>>) {
     const [openBackDrop, setOpenBackDrop] = React.useState(false);
     const router = useRouter();
-    const { addNode } = useIntersection();
+    const { addElement } = useIntersection();
     React.useEffect(() => {
         router.events.on("routeChangeStart", () => setOpenBackDrop(true));
         router.events.on("routeChangeComplete", () => setOpenBackDrop(false));
@@ -29,7 +29,7 @@ export default function MyApp({
     return (
         <>
             <Provider store={store}>
-                <Context.Provider value={{ addNode }}>
+                <Context.Provider value={{ addElement }}>
                     <ThemeWrapper>
                         <GlobalStyle />
                         <Header {...pageProps} />

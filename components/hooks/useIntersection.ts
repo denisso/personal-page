@@ -1,47 +1,59 @@
 import React from "react";
 
-export type TIntersectionNode = {
-    node: Element;
+export type TIntersectionElement = {
+    element: Element;
     trigger: ({
         entity,
+        entities,
         unobserve,
     }: {
         entity?: IntersectionObserverEntry;
+        entities?: IntersectionObserverEntry[];
         unobserve: () => void;
     }) => void;
 };
 
 export type TIntersectionMethods = {
-    addNode: ({ node, trigger }: TIntersectionNode) => {
+    addElement: ({ element, trigger }: TIntersectionElement) => {
         unobserve: () => void;
     };
-    removeNode: (node: Element) => void;
+    removeElement: (element: Element) => void;
 };
-export const useIntersection = () => {
-    const refArrayNodes = React.useRef<
-        Map<TIntersectionNode["node"], TIntersectionNode["trigger"]>
+
+type TuseIntersectionOtions = {
+    root: null | HTMLElement;
+    rootMargin: string; // like "50px 0px"
+    threshold: number | Array<number>; // like 0.2 or [0, 0.25, 0.5, 0.75, 1]
+};
+
+export const useIntersection = (
+    options: TuseIntersectionOtions = {
+        root: null,
+        rootMargin: "50px 0px",
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+    }
+) => {
+    const refArrayElements = React.useRef<
+        Map<TIntersectionElement["element"], TIntersectionElement["trigger"]>
     >(new Map());
 
     const refObserver = React.useRef<IntersectionObserver>();
 
     React.useEffect(() => {
-        const options = {
-            root: null,
-            rootMargin: "50px 0px",
-            threshold: 0.2,
-        };
+
         refObserver.current = new IntersectionObserver((entities) => {
-            for (let indx = 0; indx < entities.length; indx++) {
-                const { target } = entities[indx];
-                if (refArrayNodes.current.has(target)) {
-                    const trigger = refArrayNodes.current.get(target);
+            for (const entity of entities) {
+                const { target } = entity;
+                if (refArrayElements.current.has(target)) {
+                    const trigger = refArrayElements.current.get(target);
                     if (trigger) {
                         trigger({
-                            entity: entities[indx],
+                            entity,
+                            entities,
                             unobserve: () => {
                                 try {
                                     refObserver.current?.unobserve(target);
-                                    refArrayNodes.current?.delete(target);
+                                    refArrayElements.current?.delete(target);
                                 } catch (err) {}
                             },
                         });
@@ -51,42 +63,40 @@ export const useIntersection = () => {
         }, options);
         //
         try {
-            const nodes = refArrayNodes.current.keys();
+            const elements = refArrayElements.current.keys();
 
             while (true) {
-                const node = nodes.next();
-                if (node.done) break;
-                refObserver.current?.observe(node.value);
+                const element = elements.next();
+                if (element.done) break;
+                refObserver.current?.observe(element.value);
             }
         } catch (err) {}
-    }, []);
+    }, [options]);
 
-    const addNode: TIntersectionMethods["addNode"] = React.useCallback(
-        ({ node, trigger }) => {
-            if (node !== null) {
+    const addElement: TIntersectionMethods["addElement"] = React.useCallback(
+        ({ element, trigger }) => {
+            if (element !== null) {
                 try {
-                    if (!refArrayNodes.current.get(node)) {
-                        refObserver.current?.observe(node);
-                        refArrayNodes.current.set(node, trigger);
+                    if (!refArrayElements.current.get(element)) {
+                        refObserver.current?.observe(element);
+                        refArrayElements.current.set(element, trigger);
                     }
                 } catch (err) {}
             }
-            return { unobserve: () => refObserver.current?.unobserve(node) };
+            return { unobserve: () => refObserver.current?.unobserve(element) };
         },
         []
     );
 
-    const removeNode: TIntersectionMethods["removeNode"] = React.useCallback(
-        (node) => {
-            refObserver?.current?.unobserve(node);
-            if (refArrayNodes.current.has(node)) {
-                refArrayNodes.current.delete(node);
+    const removeElement: TIntersectionMethods["removeElement"] =
+        React.useCallback((element) => {
+            refObserver?.current?.unobserve(element);
+            if (refArrayElements.current.has(element)) {
+                refArrayElements.current.delete(element);
             }
-        },
-        []
-    );
+        }, []);
     return {
-        addNode,
-        removeNode,
+        addElement,
+        removeElement,
     };
 };
