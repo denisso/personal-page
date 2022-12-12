@@ -18,11 +18,14 @@ const ModalStyled = styled(Modal)`
         background: ${({ theme }) => theme.palette.color1[300]};
         border-radius: 0.5rem;
         .Box {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
             .Item {
                 padding: 0.5rem 1rem;
                 border-radius: var(--borderRadiusBlock);
                 transition: var(--transition) background-color;
-                
+
                 &:hover,
                 &.active {
                     background-color: ${({ theme }) =>
