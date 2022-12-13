@@ -31,7 +31,7 @@ export const getStaticPropsWrapper: IgetStaticPropsWrapper = async ({
         schema,
     });
     const props: TPageGeneric = { data: {}, error: false };
-    const revalidate = 24 * 3600;
+    const revalidate = 60;
 
     try {
         if (response.error) {
