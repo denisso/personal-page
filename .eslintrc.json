@@ -8,6 +8,6 @@
       // I suggest you add those two rules:
       "@typescript-eslint/no-unused-vars": "error",
       "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-empty-interface": "on"
+      "@typescript-eslint/no-empty-interface": 0
     }
   }
