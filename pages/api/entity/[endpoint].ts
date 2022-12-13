@@ -7,7 +7,8 @@ interface INextApiRequestEndpoint extends NextApiRequest {
     };
     body: {
         token?: string;
-        path: string;
+        path?: string;
+        "path[]"?: Array<string>;
     };
 }
 
@@ -32,24 +33,24 @@ export default async function handler(
                             .status(reqValid.status)
                             .send({ error: reqValid.error });
                     }
-
+                    console.log(body)
                     if (
                         typeof body?.path !== "string" &&
-                        !Array.isArray(body?.path)
+                        !Array.isArray(body?.["path[]"])
                     ) {
                         return res.status(402).send({
-                            error: "path not string || Array || undefined",
+                            error: "path not string || Array<string> || undefined",
                         });
                     }
 
-                    if (typeof body?.path !== "string") {
-                        res.revalidate(body?.path);
-                        result.data = `${body?.path} revalidated`;
+                    if (typeof body?.path === "string") {
+                        res.revalidate(body.path);
+                        result.data = `${body.path} revalidated`;
                     } else {
-                        for (const path of body?.path) {
+                        for (const path of body["path[]"]) {
                             if (typeof path === "string") {
                                 await res.revalidate(path);
-                                result.data += `${body?.path} revalidated, `;
+                                result.data += `${path} revalidated, `;
                             }
                         }
                     }
