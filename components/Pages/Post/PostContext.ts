@@ -14,7 +14,7 @@ export type TheadingContext = {
 }
 
 export const PostContext = React.createContext<TheadingContext>({
-    setCurrent: () => {},
+    setCurrent: () => undefined,
     current: 0,
     headers: {current: []}
 });

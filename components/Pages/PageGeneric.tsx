@@ -7,7 +7,6 @@ import { FallbackError } from "../Elements/FallbackError";
 import Layout from "../Layout";
 import { useRouter } from "next/router";
 import { FallbackLoading } from "../Elements/FallbackLoading";
-import { ImageStyles } from "./GenericStyles";
 import {HeaderBlock} from "./_Parts/HeaderBlock"
 const Container = styled("div")`
     display: flex;

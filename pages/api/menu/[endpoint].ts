@@ -20,7 +20,7 @@ export default async function handler(
     const result: TMenuResponse = {
 
     };
-    const body = req?.body;
+
     try {
         const { serverRuntimeConfig } = getConfig();
         switch (req?.query?.endpoint) {
