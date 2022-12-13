@@ -3,7 +3,7 @@ import { Modal, useModal, modalDefaultStyle } from "../../../features/modal";
 import Button from "@mui/material/Button";
 import styled from "styled-components";
 import { PostContext } from "./PostContext";
-import { EntityStore } from "@apollo/client/cache";
+
 const ModalStyled = styled(Modal)`
     ${modalDefaultStyle}
     height: 90%;
@@ -101,7 +101,7 @@ const ItemHeader = ({
             {Array(level - 1)
                 .fill(0)
                 .map((_, i) => (
-                    <div className={`Item-Entity Level${i + 1}`}></div>
+                    <div key={`Level${i + 1}`} className={`Item-Entity Level${i + 1}`}></div>
                 ))}
 
             <div className="Content">{content}</div>
