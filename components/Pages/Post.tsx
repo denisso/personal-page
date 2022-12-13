@@ -114,7 +114,7 @@ const MarkdownCustom = ({ content }: { content: string }) => {
         if (setCurrent instanceof Function) {
             setCurrent(topHeader.current);
         }
-    }, []);
+    }, [headers, setCurrent]);
 
     React.useEffect(() => {
         window.addEventListener("scroll", trigger);
@@ -124,7 +124,7 @@ const MarkdownCustom = ({ content }: { content: string }) => {
             window.removeEventListener("scroll", trigger);
             window.removeEventListener("resize", trigger);
         };
-    }, []);
+    }, [trigger]);
 
     const markdownComponents = React.useMemo(() => {
         const HeaderComponent = (
@@ -165,7 +165,7 @@ const MarkdownCustom = ({ content }: { content: string }) => {
             result[`h${i}`] = HeaderComponent.bind(null, `h${i}`);
         }
         return result;
-    }, []);
+    }, [headers]);
     return <Markdown content={content} components={markdownComponents} />;
 };
 
