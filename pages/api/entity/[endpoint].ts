@@ -33,7 +33,7 @@ export default async function handler(
                             .status(reqValid.status)
                             .send({ error: reqValid.error });
                     }
-                    console.log(body)
+
                     if (
                         typeof body?.path !== "string" &&
                         !Array.isArray(body?.["path[]"])
