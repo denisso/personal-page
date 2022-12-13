@@ -34,14 +34,12 @@ export default async function handler(
                     }
 
                     if (
-                        typeof body?.path !== "string" ||
+                        typeof body?.path !== "string" &&
                         !Array.isArray(body?.path)
                     ) {
-                        return res
-                            .status(402)
-                            .send({
-                                error: "path not string || Array || undefined",
-                            });
+                        return res.status(402).send({
+                            error: "path not string || Array || undefined",
+                        });
                     }
 
                     if (typeof body?.path !== "string") {
