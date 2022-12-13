@@ -40,8 +40,8 @@ export const HeaderBlock = ({ data }: TPageGeneric) => {
                     <ImageLazy
                         src={data?.image?.url}
                         alt={"Title image"}
-                        height={data?.image?.height}
-                        width={data?.image?.width}
+                        height={240}
+                        width={400}
                     />
                 </LoadingLazy>
             )}
