@@ -12,8 +12,10 @@ const getPropsGeneric = ({ data }: { data: any }): TPropsGeneric => {
     if (data.slug) result.slug = data.slug;
     if (Array.isArray(data.image) && data.image.length) {
         const image: { [key: string]: any } = {};
-        if (data.image[0] instanceof Object)
+        if (data.image[0] instanceof Object) {
             Object.assign(image, data.image[0]);
+            image.url = data.image[0].original_secure_url;
+        }
 
         result.image = image as TImage;
         result.image.path = image?.public_id;

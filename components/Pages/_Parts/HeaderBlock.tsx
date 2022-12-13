@@ -33,6 +33,7 @@ const Container = styled("div")`
     }
 `;
 export const HeaderBlock = ({ data }: TPageGeneric) => {
+    console.log("data", data)
     return (
         <Container>
             {data?.image && (
