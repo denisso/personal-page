@@ -190,6 +190,7 @@ export const Content = styled("div")`
         .codebox {
             line-height: 1.5rem;
             margin: 0.5em 0;
+            padding-top: 1rem
         }
         .codelines {
             color: #f8f8f2;
@@ -208,6 +209,7 @@ export const Content = styled("div")`
                 font-size: 1rem;
             }
             pre, pre[class*="language-"] {
+                padding: 0;
                 margin: 0;
                 color: #f8f8f2;
                 background-color: transparent;
