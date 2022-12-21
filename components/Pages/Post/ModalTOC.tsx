@@ -21,6 +21,7 @@ const ModalStyled = styled(Modal)`
             display: flex;
             flex-direction: column;
             gap: 0.4rem;
+            height: 100%;
             .Item {
                 padding: 0.5rem 1rem;
                 border-radius: var(--borderRadiusBlock);
@@ -121,7 +122,7 @@ export const ModalTOC = () => {
                             content={content}
                             hash={hash}
                             active={i === current}
-                            level={level}
+                            level={level || 1}
                             key={hash}
                             closeCallback={closeModal}
                         />

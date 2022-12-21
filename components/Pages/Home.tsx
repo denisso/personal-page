@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-import { Markdown } from "../Service/Markdown";
+import { HTMLComponent } from "../Service/HTMLComponent";
 import HeroBlock from "../Elements/HeroBlock";
 import { TPageHome } from "../../lib/types";
 import moment from "moment";
@@ -39,7 +39,7 @@ export const Home = ({ data, error }: TPageHome) => {
             {typeof data?.body === "string" && (
                 <section className="blockDescribe">
                     <h2>Обо мне</h2>
-                    <Markdown content={data?.body} />
+                    <HTMLComponent content={data?.body} />
                 </section>
             )}
 

@@ -46,7 +46,7 @@ export default async function handler(
                     if (typeof body?.path === "string") {
                         res.revalidate(body.path);
                         result.data = `${body.path} revalidated`;
-                    } else {
+                    } else if (Array.isArray(body["path[]"])) {
                         for (const path of body["path[]"]) {
                             if (typeof path === "string") {
                                 await res.revalidate(path);
@@ -59,7 +59,7 @@ export default async function handler(
             default:
         }
     } catch (err) {
-        return res.status(500).send({ error: err.message });
+        return res.status(500).send({ error: err?.message });
     }
 
     res.status(200).json(result);

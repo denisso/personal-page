@@ -1,5 +1,5 @@
 import React from "react";
-import { Markdown } from "../Service/Markdown";
+import { HTMLComponent } from "../Service/HTMLComponent";
 import { TPageGeneric } from "../../lib/types";
 import styled from "styled-components";
 import { EntitiesLinks } from "../Elements/EntitiesLinks";
@@ -45,12 +45,12 @@ export const Component = ({ data }: TPageGeneric) => {
 
             {data?.body && (
                 <section className="Body">
-                    <Markdown content={data?.body} />
+                    <HTMLComponent content={data?.body} />
                 </section>
             )}
 
             <EntitiesLinks
-                linked={data?.links instanceof Object && data?.links?._all}
+                linked={data?.links?._all || []}
             />
         </Container>
     );
