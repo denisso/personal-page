@@ -37,7 +37,7 @@ export const base = css`
     h5,
     h6 {
         margin-top: 1rem;
-        line-height: 1;
+        /* line-height: 1; */
     }
     h1 {
         font-size: 1.8rem;
