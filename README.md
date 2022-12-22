@@ -1,13 +1,5 @@
 [web site](https://mrdramm.netlify.app/)
 
-## Начало работы
-
-```bash
-npm run dev
-# or
-yarn dev
-```
-
 Открываем в браузере [http://localhost:3000](http://localhost:3000)
 
 Нужно подключить сервисы:
@@ -30,3 +22,10 @@ yarn dev
 
 * Переменные для cloudinary
   * IMAGECLOUDPREFIX в формате  https://res.cloudinary.com/[account name]/image/upload
+
+## Начало работы
+
+```bash
+npm install
+npm run dev
+```
