@@ -25,8 +25,8 @@ yarn dev
   * MAILGUN_API_KEY - токен
   * MAILGUN_DOMAIN - имя нашего домена на маилган
   * MAILGUN_URL - адрес апи сервера малган
-  * MAILGUN_FROM_EMAIL_ADDRESS - адрес с которого нам маилган отправляет писбма
-  * MAILGUN_CONTACT_TO_EMAIL_ADDRESS - адрес га котором получаем письма
+  * MAILGUN_FROM_EMAIL_ADDRESS - адрес с которого нам маилган отправляет письма
+  * MAILGUN_CONTACT_TO_EMAIL_ADDRESS - адрес на котором получаем письма
 
 * Переменные для cloudinary
   * IMAGECLOUDPREFIX в формате  https://res.cloudinary.com/[account name]/image/upload
