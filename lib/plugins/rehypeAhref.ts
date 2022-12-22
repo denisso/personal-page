@@ -6,11 +6,15 @@ export const rehypeAhref = () => {
         try {
             visit(tree, { tagName: "a" }, (node: Node) => {
                 if (
-                    node?.properties instanceof Object &&
-                    node?.properties?.href?.[0] !== "#"
+                    node.properties?.href?.[0] !== "#"
                 ) {
-                    node.properties.target = "_blank";
-                    node.properties.rel = "noreferrer";
+                    if(node.properties instanceof Object === false){
+                        node.properties = {}
+                    }
+                    if (node.properties){
+                        node.properties.target = "_blank";
+                        node.properties.rel = "noreferrer";
+                    }
                 }
             });
         } catch (err) {}
