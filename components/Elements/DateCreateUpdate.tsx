@@ -17,7 +17,7 @@ export const DateCreateUpdate = ({
                 <span>
                     Создан:{" "}
                     {moment(firstPublishedAt).format("YYYY/MM/DD")}{" "}
-                    U: {moment(publishedAt).format("YYYY/MM/DD")}
+                    Обновлен: {moment(publishedAt).format("YYYY/MM/DD")}
                 </span>
             ) : (
                 <span>
