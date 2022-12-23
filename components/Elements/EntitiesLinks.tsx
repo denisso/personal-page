@@ -140,9 +140,9 @@ export const EntitiesLinks = ({
                                 </Link>
                             </div>
                             <div className="Content">
-                                <span className="Type">
+                                {/* <span className="Type">
                                     <b>{linkedItem?.type}</b>
-                                </span>
+                                </span> */}
                                 <DateCreateUpdate
                                     publishedAt={linkedItem?.publishedAt}
                                     firstPublishedAt={

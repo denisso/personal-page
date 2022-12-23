@@ -1,7 +1,5 @@
 [web site](https://mrdramm.netlify.app/)
 
-Открываем в браузере [http://localhost:3000](http://localhost:3000)
-
 Нужно подключить сервисы:
 * mailgun для отправки почты
 * contentful для хранения контента
@@ -29,3 +27,5 @@
 npm install
 npm run dev
 ```
+
+Открываем в браузере [http://localhost:3000](http://localhost:3000)

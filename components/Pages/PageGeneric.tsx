@@ -7,12 +7,12 @@ import { FallbackError } from "../Elements/FallbackError";
 import Layout from "../Layout";
 import { useRouter } from "next/router";
 import { FallbackLoading } from "../Elements/FallbackLoading";
-import {HeaderBlock} from "./_Parts/HeaderBlock"
+import { ImageHead } from "./_Parts/ImageHead";
 const Container = styled("div")`
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    
+    align-items: center;
     .Header {
         display: flex;
         align-items: center;
@@ -41,17 +41,15 @@ export const Component = ({ data }: TPageGeneric) => {
                 <span className="Sign">✍️</span> {data?.title}
             </h1>
 
-            <HeaderBlock data={data}/>
+            <ImageHead data={data} />
 
             {data?.body && (
                 <section className="Body">
                     <HTMLComponent content={data?.body} />
                 </section>
             )}
-
-            <EntitiesLinks
-                linked={data?.links?._all || []}
-            />
+            <h2>Список материалов</h2>
+            <EntitiesLinks linked={data?.links?._all || []} />
         </Container>
     );
 };
