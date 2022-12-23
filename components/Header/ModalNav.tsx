@@ -116,7 +116,8 @@ export const ModalNav = () => {
     React.useEffect(() => {
         if (data) {
             if (Array.isArray(data?.data?.menu)) {
-                cache.current.menu = data.data.menu;
+
+                    cache.current.menu = data?.data?.menu || [];
             }
 
             if (Number.isInteger(+data?.data?.total)) {
@@ -174,8 +175,7 @@ export const ModalNav = () => {
                 </Form>
             </div>
             <div className="State">
-                Категории: {cache.current.menu.length} Статьи:{" "}
-                {cache.current.articles} Текущий фильтр: {cache.current.filter}
+                Категории: {cache.current.menu.length}. Число рядом с категорией это количество статей в категории. Текущий фильтр: {cache.current.filter}
             </div>
             <div className="Items">
                 <div className="List">
