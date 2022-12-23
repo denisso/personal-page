@@ -25,7 +25,7 @@ const schema: TSchema = [
 export type TMenuResponse = {
     data?: {
         menu?: TMenu["menu"];
-        total?: number;
+        articles?: number;
     };
     error?: string | boolean;
 };
@@ -63,7 +63,7 @@ export const getMenu: IGetMenu = () => {
                 );
             }
             if (response?.[EEntities.posts]?.total) {
-                result.data.total = response[EEntities.posts].total;
+                result.data.articles = response[EEntities.posts].total;
             }
 
             return result;
