@@ -3,6 +3,7 @@ import Link from "@mui/material/Link";
 import Tooltip from "@mui/material/Tooltip";
 import styled from "styled-components";
 import Cyberforum from "../../assets/cyberforum.svg";
+import Xabr from "../../assets/xabr.svg"
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import Envelope from "@mui/icons-material/MailOutline";
 import GitHub from "@mui/icons-material/GitHub";
@@ -38,6 +39,13 @@ const links: {
         href: "https://www.cyberforum.ru/members/1837464.html",
         width: 3.5,
     },
+    xabr: {
+        icon: Xabr,
+        title: "Хабр профиль",
+        href: "https://habr.com/ru/users/denis-anatol/posts/",
+        width: 2.4,
+        height: 1.3,
+    },
     mail: {
         icon: Envelope,
         title: "Отправить письмо по электронной почте на адрес mr_dramm@mail.ru",
@@ -52,6 +60,7 @@ const links: {
         width: 1.3,
         height: 1.3,
     },
+
 };
 
 const IconContainer = styled("div")<TypeIconContainer>`
