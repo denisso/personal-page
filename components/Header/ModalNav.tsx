@@ -84,10 +84,7 @@ export const ModalNav = () => {
     const [stateSubmit, setStateSubmit] = React.useState<ESubmitStates>(
         ESubmitStates.Initial
     );
-    // const cache = React.useRef<{
-    //     menu: Array<TMenuItem>;
-    //     filter: string;
-    // }>({ menu: [], filter: "" });
+
     const [filter, setFilter] = React.useState("");
     const schema: TSchema = React.useMemo(() => {
         return [
@@ -110,7 +107,13 @@ export const ModalNav = () => {
     React.useEffect(() => {
         if (menu instanceof Object)
             if (Array.isArray(menu))
-                setItems(menu.filter((item) => item?.title?.includes(filter)));
+                setItems(
+                    menu.filter((item) =>
+                        item?.title
+                            ?.toLowerCase()
+                            ?.includes(filter?.toLowerCase())
+                    )
+                );
     }, [menu, setItems, filter]);
     const onSubmit = React.useCallback(
         (values: TFormValues, action: FormikHelpers<TFormValues>) => {
