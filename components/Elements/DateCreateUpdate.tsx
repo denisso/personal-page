@@ -1,3 +1,4 @@
+import React from "react"
 import moment from "moment";
 
 export const DateCreateUpdate = ({
@@ -14,13 +15,13 @@ export const DateCreateUpdate = ({
         <span className="publishedAt">
             {moment(publishedAt).format("YYYY/MM/DD") !== moment(firstPublishedAt).format("YYYY/MM/DD") ? (
                 <span>
-                    C:{" "}
+                    Создан:{" "}
                     {moment(firstPublishedAt).format("YYYY/MM/DD")}{" "}
                     U: {moment(publishedAt).format("YYYY/MM/DD")}
                 </span>
             ) : (
                 <span>
-                    U: {moment(publishedAt).format("YYYY/MM/DD")}
+                    Обновлен: {moment(publishedAt).format("YYYY/MM/DD")}
                 </span>
             )}
         </span>

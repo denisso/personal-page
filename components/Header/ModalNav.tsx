@@ -1,8 +1,6 @@
 import React from "react";
 import { Modal, useModal } from "../../features/modal";
-import { TMenuResponse } from "../../lib/contentful/getMenu";
 import styled from "styled-components";
-import axios, { AxiosResponse } from "axios";
 import { TMenuItem } from "../../lib/types";
 import Button from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
@@ -10,13 +8,14 @@ import {
     TSchema,
     Form,
     ESubmitStates,
-    BtnSubmit,
     TStateLabels,
+    BtnSubmit,
 } from "../Elements/Form";
+import { FormikHelpers } from "formik";
+
 import { Chips, TChip } from "../Elements/Chips";
-import { updateState } from "../../features/state";
-import { useDispatch } from "react-redux";
-import useSWR from "swr";
+import { useSelector } from "react-redux";
+import { selectState } from "../../features/state";
 
 const ModalStyled = styled(Modal)`
     transition: width var(--transition), height var(--transition);
@@ -77,77 +76,47 @@ type TFormValues = {
     filter: string;
 };
 const stateLabels: TStateLabels = {
-    Initial: "Применить",
-    Pending: "",
-    Error: "Неудача, Искать снова",
+    Initial: "Сбросить",
 };
-
-const getMenu = (url: string): Promise<TMenuResponse> =>
-    axios.get(url).then(({ data }: AxiosResponse<TMenuResponse>) => data);
 
 export const ModalNav = () => {
     const { isModalOpen, closeModal } = useModal({ modal: "navMenu" });
     const [stateSubmit, setStateSubmit] = React.useState<ESubmitStates>(
         ESubmitStates.Initial
     );
-    const cache = React.useRef<{
-        menu: Array<TMenuItem>;
-        filter: string;
-        articles: number;
-    }>({ menu: [], filter: "", articles: 0 });
-
-    const schema: TSchema = [
-        {
-            text: {
-                name: "filter",
-                label: "Фильтр меню",
-                autoFocus: true,
-                value: cache.current.filter,
+    // const cache = React.useRef<{
+    //     menu: Array<TMenuItem>;
+    //     filter: string;
+    // }>({ menu: [], filter: "" });
+    const [filter, setFilter] = React.useState("");
+    const schema: TSchema = React.useMemo(() => {
+        return [
+            {
+                text: {
+                    name: "filter",
+                    label: "Фильтр категорий меню",
+                    autoFocus: true,
+                    value: "",
+                    onChange: (filter) => {
+                        setFilter(filter);
+                    },
+                },
             },
-        },
-    ];
+        ];
+    }, [setFilter]);
     const [items, setItems] = React.useState<Array<TMenuItem>>([]);
-    const dispatch = useDispatch();
 
-    const { data /*error*/ } = useSWR("/api/menu/getmenu", getMenu, {
-        refreshInterval: 10000,
-    });
-
+    const { menu } = useSelector(selectState);
     React.useEffect(() => {
-        if (data) {
-            if (Array.isArray(data?.data?.menu)) {
-
-                    cache.current.menu = data?.data?.menu || [];
-            }
-
-            if (Number.isInteger(+data?.data?.total)) {
-                cache.current.articles = +data.data.total;
-                dispatch(updateState({ articles: +data.data.total }));
-            }
-
-            setItems(
-                cache.current.menu.filter((item) =>
-                    item.title.includes(cache.current.filter)
-                )
-            );
-        }
-    }, [data, setItems, dispatch]);
+        if (menu instanceof Object)
+            if (Array.isArray(menu))
+                setItems(menu.filter((item) => item?.title?.includes(filter)));
+    }, [menu, setItems, filter]);
     const onSubmit = React.useCallback(
-        ({ filter }: TFormValues) => {
-            // submit
-            cache.current.filter = filter;
-
-            if (filter.trim() !== "") {
-                setItems(
-                    cache.current.menu.filter((item) =>
-                        item.title.toLowerCase().includes(filter.toLowerCase())
-                    )
-                );
-            } else {
-                setItems(cache.current.menu);
-            }
+        (values: TFormValues, action: FormikHelpers<TFormValues>) => {
+            action.resetForm({ values: { filter: "" } });
         },
-        [setItems]
+        []
     );
     const handleCanel = () => {
         closeModal();
@@ -158,14 +127,15 @@ export const ModalNav = () => {
             <div className="FirstLine">
                 <Form
                     schema={schema}
-                    onSubmit={onSubmit}
                     className="Form SendMessage"
                     direction="row"
+                    onSubmit={onSubmit}
                 >
                     <div className="Buttons">
                         <BtnSubmit
                             stateSubmit={stateSubmit}
                             stateLabels={stateLabels}
+                            disabled={filter === "" && true}
                         />
 
                         <Button onClick={handleCanel} className="BtnClose">
@@ -175,7 +145,8 @@ export const ModalNav = () => {
                 </Form>
             </div>
             <div className="State">
-                Категории: {cache.current.menu.length}. Число рядом с категорией это количество статей в категории. Текущий фильтр: {cache.current.filter}
+                Выберите интересующую категорию. Число рядом с названием
+                категориеи это количество статей.
             </div>
             <div className="Items">
                 <div className="List">

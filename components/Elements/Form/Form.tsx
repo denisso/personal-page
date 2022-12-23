@@ -6,7 +6,7 @@ import { Fields } from "./Fields";
 import styled from "styled-components";
 
 type TFormProps = {
-    onSubmit: (values: any, actions: any) => void;
+    onSubmit?: (values?: any, actions?: any) => void;
     schema: TSchema;
     direction?: "column" | "row";
     className?: string;
@@ -33,6 +33,8 @@ const Container = styled("div")<{ direction: TFormProps["direction"] }>`
         flex-shrink: 0;
     }
 `;
+
+const dummySubmit = () => undefined
 /**
  * Form with minimum styles, schema generator and etc
  * @param param0
@@ -52,7 +54,7 @@ export const Form: IForm = ({
     return (
         <Formik
             initialValues={initialValues}
-            onSubmit={onSubmit}
+            onSubmit={onSubmit || dummySubmit}
             validationSchema={validationSchema}
         >
             <FForm className={className}>

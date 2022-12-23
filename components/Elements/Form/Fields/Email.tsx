@@ -1,3 +1,4 @@
+import React from "react"
 import { FieldText } from "./Text";
 import { TField, TFieldEmail, IValidate } from "..";
 import * as Yup from "yup";

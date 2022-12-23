@@ -1,3 +1,4 @@
+import React from "react";
 import { useField } from "formik";
 import { TFieldText, IValidate } from "../types";
 import TextField from "@mui/material/TextField";
@@ -9,8 +10,14 @@ export const FieldText = ({
     multiline,
     disabled,
     autoFocus,
+    onChange,
 }: TFieldText) => {
     const [input, meta] = useField(name);
+    React.useEffect(() => {
+        if (onChange instanceof Function) {
+            onChange(input.value);
+        }
+    }, [input.value, onChange]);
     return (
         <div className={`Field ${name}`}>
             <TextField
@@ -52,7 +59,7 @@ const getSchema = (rulesIn: TFieldText["rules"]): any => {
 };
 
 export const validateText: IValidate = (field: TFieldText) => {
-    const { value,  ...other } = field;
+    const { value, ...other } = field;
     let val = "";
     if (typeof value === "string") val = value;
     const result = { schema: getSchema(field["rules"]), ...other, value: val };

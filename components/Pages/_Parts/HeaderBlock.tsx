@@ -1,3 +1,4 @@
+import React from "react"
 import { ImageLazy } from "../../Elements/LoadingLazy/ImageLazy";
 import { LoadingLazy } from "../../Elements/LoadingLazy";
 import { TPageGeneric } from "../../../lib/types";

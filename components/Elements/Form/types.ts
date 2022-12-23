@@ -4,12 +4,13 @@ export type TField = {
     value?: string;
     disabled?: boolean;
     autoFocus?: boolean;
+    onChange?: (arg: string) => void;
 };
 export type TFormStatus = {
     disabled?: boolean;
 };
 export type TRules = {
-    rules?: { required?: boolean; };
+    rules?: { required?: boolean };
 };
 
 type TRulesText = TRules & {

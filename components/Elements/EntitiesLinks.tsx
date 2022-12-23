@@ -1,3 +1,4 @@
+import React from "react";
 import styled from "styled-components";
 import { TPageGeneric } from "../../lib/types";
 import Link from "next/link";
@@ -63,8 +64,8 @@ const Container = styled("div")`
                         }
                     }
                 }
-                .Refs{
-                    margin-top: .2rem;
+                .Refs {
+                    margin-top: 0.2rem;
                     display: flex;
                     justify-content: center;
                 }
@@ -126,7 +127,7 @@ export const EntitiesLinks = ({
                         )}
                         <div className="InfoBlock">
                             <div className="Title">
-                                {index}.{" "}
+                                {index + 1}.{" "}
                                 <Link
                                     href={`/${linkedItem?.type?.toLowerCase()}/${
                                         linkedItem?.slug
@@ -157,7 +158,7 @@ export const EntitiesLinks = ({
                                         )}
 
                                     <Link
-                                        href={`/${linkedItem?.type.toLowerCase()}/${
+                                        href={`/${linkedItem?.type?.toLowerCase()}/${
                                             linkedItem?.slug
                                         }`}
                                         passHref
