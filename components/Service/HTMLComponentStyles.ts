@@ -193,6 +193,7 @@ export const Content = styled("div")`
             padding-top: 1rem
         }
         .codelines {
+            pointer-events: none;
             color: #f8f8f2;
             display: flex;
             flex-direction: column;
