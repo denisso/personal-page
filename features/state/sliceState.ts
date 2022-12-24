@@ -9,12 +9,18 @@ export type TState = {
     error: string | boolean;
 };
 
-export const startStateUpdate = () => {
-    fetchGetMenu()
-};
+export const fetch = (url: string) =>
+    new Promise((resolve, reject) => {
+        axios
+            .get(url)
+            .then((response: AxiosResponse<TMenuResponse>) => {
+                resolve(response.data.data);
+            })
+            .catch((err: AxiosError) => reject(err.message));
+    });
 
 export const fetchGetMenu = createAsyncThunk("state", async () => {
-    return await axios.get("/api/menu/getmenu");
+    return await fetch("/api/menu/getmenu")
 });
 
 const slice = createSlice({
@@ -31,22 +37,23 @@ const slice = createSlice({
         // @ts-expect-error: hush. and no problem
         builder.addCase(
             fetchGetMenu.fulfilled,
-            (state, action: PayloadAction<AxiosResponse<TMenuResponse>>) => {
+            (state, action: PayloadAction<TMenuResponse>) => {
                 slice.caseReducers.updateState(state, {
+                    // @ts-expect-error: hush. and no problem
                     payload: {
-                        ...action.payload?.data?.data,
-                        error: false,
+                        ...action.payload,
                     },
                 });
             }
         ),
-            // @ts-expect-error: hush. and no problem
+            
             builder.addCase(
                 fetchGetMenu.rejected,
-                (state, action: AxiosError) => {
+                (state, action) => {
                     slice.caseReducers.updateState(state, {
                         payload: {
-                            error: action.message,
+                            // @ts-expect-error: hush. and no problem
+                            error: action.payload,
                         },
                     });
                 }

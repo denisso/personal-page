@@ -27,7 +27,7 @@ export type TMenuResponse = {
         menu?: TMenu["menu"];
         articles?: number;
     };
-    error?: string | boolean;
+    error?: string | boolean | number;
 };
 
 const variables = {};
@@ -41,6 +41,7 @@ type THandleResult = {
     [key: string]: { items: Array<TMenuItem>; total: number };
 };
 export const getMenu: IGetMenu = () => {
+
     return clientWrapper(
         { query: gql(String.raw`${query}`), variables },
         ({ data, error }: TContentfulResponse) => {

@@ -18,7 +18,8 @@ export default async function handler(
     res: NextApiResponse<TMenuResponse>
 ) {
     const result: TMenuResponse = {
-
+        data: { menu: [], articles: 0 },
+        error: EErrorAPI.noError,
     };
 
     try {
@@ -26,45 +27,36 @@ export default async function handler(
         switch (req?.query?.endpoint) {
             case "revalidate":
                 {
+                    // check method, token, header props
                     const reqValid = reqValidation(req);
                     if (reqValid.error !== EErrorAPI.noError) {
                         return res
                             .status(reqValid.status)
                             .send({ error: reqValid.error });
                     }
-
+                    //if error send error and finish work, do not rewrite prev menu
                     const response = await getMenu();
                     if (response.error) {
-                        serverRuntimeConfig.errorApi = EErrorAPI.requestError;
-                        result.error = serverRuntimeConfig.errorApi;
+                        result.data = response?.data
+                        result.error = response.error || EErrorAPI.requestError;
                         return res.status(200).json(result);
                     }
-                    serverRuntimeConfig.errorApi = EErrorAPI.noError
-                    serverRuntimeConfig.MENU = {...response.data};
-
-                    result.data = serverRuntimeConfig.MENU;
+                    serverRuntimeConfig.MENU.data = { ...response.data };
+                    result.data = serverRuntimeConfig.MENU.data;
                 }
                 break;
             case "getmenu":
                 {
-
-                    if (
-                        !Array.isArray(serverRuntimeConfig.MENU) ||
-                        serverRuntimeConfig.MENU.length == 0
-                    ) {
+                    if (!serverRuntimeConfig?.MENU?.data?.menu?.length) {
                         const response = await getMenu();
 
                         if (response.error) {
-                            serverRuntimeConfig.errorApi =
-                                EErrorAPI.requestError;
-                            result.error = serverRuntimeConfig.errorApi;
+                            result.error = response.error || EErrorAPI.requestError;
                             return res.status(200).json(result);
                         }
-                        serverRuntimeConfig.errorApi = serverRuntimeConfig.noError;
-                        serverRuntimeConfig.MENU = {...response.data};
+                        serverRuntimeConfig.MENU.data = { ...response.data };
                     }
-                    result.data = serverRuntimeConfig.MENU;
-                    result.error = serverRuntimeConfig.errorApi;
+                    result.data = serverRuntimeConfig.MENU.data;
                 }
                 break;
             default:
