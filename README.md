@@ -21,6 +21,8 @@
 * Переменные для cloudinary
   * IMAGECLOUDPREFIX в формате  https://res.cloudinary.com/[account name]/image/upload
 
+* SECURITY_TOKEN - для доступа к API сервера
+
 ## Начало работы
 
 ```bash
