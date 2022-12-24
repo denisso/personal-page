@@ -7,7 +7,7 @@ import { FallbackError } from "../Elements/FallbackError";
 import Layout from "../Layout";
 import { useRouter } from "next/router";
 import { FallbackLoading } from "../Elements/FallbackLoading";
-import { ImageHead } from "./_Parts/ImageHead";
+// import { ImageHead } from "./_Parts/ImageHead";
 const Container = styled("div")`
     display: flex;
     flex-direction: column;
@@ -41,7 +41,7 @@ export const Component = ({ data }: TPageGeneric) => {
                 <span className="Sign">✍️</span> {data?.title}
             </h1>
 
-            <ImageHead data={data} />
+            {/* <ImageHead data={data} /> */}
 
             {data?.body && (
                 <section className="Body">

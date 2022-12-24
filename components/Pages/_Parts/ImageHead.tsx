@@ -5,7 +5,7 @@ import { TPageGeneric } from "../../../lib/types";
 import styled from "styled-components";
 import { ImageStyles } from "./GenericImageStyles";
 const Container = styled("div")`
-    gap: 1rem;
+width: 100%;
     ${({ theme }) => theme.breakpoints.up("md")} {
         display: flex;
         flex-direction: row;
@@ -23,6 +23,7 @@ const Container = styled("div")`
     }
 `;
 export const ImageHead = ({ data }: TPageGeneric) => {
+
     return (
         <Container>
             {data?.image && (
