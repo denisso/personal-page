@@ -37,7 +37,7 @@ export default async function handler(
                     //if error send error and finish work, do not rewrite prev menu
                     const response = await getMenu();
                     if (response.error) {
-                        result.data = response?.data
+                        result.data = response?.data;
                         result.error = response.error || EErrorAPI.requestError;
                         return res.status(200).json(result);
                     }
@@ -51,9 +51,18 @@ export default async function handler(
                         const response = await getMenu();
 
                         if (response.error) {
-                            result.error = response.error || EErrorAPI.requestError;
+                            result.error =
+                                response.error || EErrorAPI.requestError;
                             return res.status(200).json(result);
                         }
+
+                        if (
+                            serverRuntimeConfig?.MENU instanceof Object ===
+                            false
+                        ) {
+                            serverRuntimeConfig.MENU = {};
+                        }
+
                         serverRuntimeConfig.MENU.data = { ...response.data };
                     }
                     result.data = serverRuntimeConfig.MENU.data;
