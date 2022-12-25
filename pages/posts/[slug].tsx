@@ -1,10 +1,15 @@
+import React from "react"
 import { TPageGeneric } from "../../lib/types";
-import { Post } from "../../components/Pages/Post";
 import { GetStaticProps } from "next";
 import { EEntities } from "../../lib/types";
 import { TSchema, ETypeFields } from "../../lib/contentful/queryGenerator";
 import { getSlug, getStaticPropsWrapper } from "../../lib/getStaticProps";
+import dynamic from "next/dynamic";
 
+const Post = dynamic<TPageGeneric>(() =>
+    import("../../components/Pages/Post").then((res) => res.Post)
+);
+//import { Post } from "../../components/Pages/Post";
 const PostsPage = (props: TPageGeneric) => <Post {...props} />;
 
 export default PostsPage;

@@ -92,8 +92,6 @@ const searchRequest: ISearchRequest = (search, token) => {
     });
 };
 
-
-
 type TFormValues = {
     search: string;
 };
@@ -103,14 +101,14 @@ const stateLabels: TStateLabels = {
     Error: "Неудача, Искать снова",
 };
 
-export const ModalSearch = () => {
+const ModalSearch = () => {
     const { isModalOpen, closeModal } = useModal({ modal: "search" });
-    const articles = useSelector(selectArticles)
+    const articles = useSelector(selectArticles);
     const [result, setResult] = React.useState<Array<TPropsGeneric>>([]);
     const [stateSubmit, setStateSubmit] = React.useState<ESubmitStates>(
         ESubmitStates.Initial
     );
-    const [search, setSearch] = React.useState<string>("")
+    const [search, setSearch] = React.useState<string>("");
     const schema: TSchema = [
         {
             text: {
@@ -118,7 +116,7 @@ export const ModalSearch = () => {
                 label: "Строка поиска",
                 autoFocus: true,
                 rules: { required: true, min: 4 },
-                value: search
+                value: search,
             },
         },
     ];
@@ -126,11 +124,11 @@ export const ModalSearch = () => {
         (values: TFormValues, { setStatus }: FormikHelpers<TFormValues>) => {
             setStatus({ disabled: true });
             setStateSubmit(ESubmitStates.Pending);
-            setSearch(values.search)
+            setSearch(values.search);
             searchRequest(values.search)
-                .then((result:TResponseGeneric) => {
+                .then((result: TResponseGeneric) => {
                     setStateSubmit(ESubmitStates.Successful);
-                    if(Array.isArray(result.data)){
+                    if (Array.isArray(result.data)) {
                         setResult(result.data);
                     }
                     setStatus({ disabled: false });
@@ -166,11 +164,18 @@ export const ModalSearch = () => {
                         </Button>
                     </div>
                 </Form>
-                <div className="Info">Всего: {articles.articles} найдено: {result.length} Запрос: {search} </div>
+                <div className="Info">
+                    Всего: {articles.articles} найдено: {result.length} Запрос:{" "}
+                    {search}{" "}
+                </div>
             </div>
 
             <div className="Result">
-                <EntitiesLinks linked={result} className="ResultList" callbackClick={closeModal}/>
+                <EntitiesLinks
+                    linked={result}
+                    className="ResultList"
+                    callbackClick={closeModal}
+                />
             </div>
             <div className="Pagination">
                 <Pagination count={10} disabled />
@@ -178,3 +183,5 @@ export const ModalSearch = () => {
         </ModalStyled>
     );
 };
+
+export default ModalSearch;

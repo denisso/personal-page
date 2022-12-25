@@ -1,9 +1,14 @@
+import React from "react";
 import { GetStaticProps } from "next";
 import { TPageGeneric, EEntities, TPropsGeneric } from "../lib/types";
-import { PageGeneric } from "../components/Pages/PageGeneric";
 import { TSchema, ETypeFields } from "../lib/contentful/queryGenerator";
 import { getStaticPropsWrapper } from "../lib/getStaticProps";
+import dynamic from "next/dynamic";
 
+const PageGeneric = dynamic<TPageGeneric>(() =>
+    import("../components/Pages/PageGeneric").then((res) => res.PageGeneric)
+);
+//import { PageGeneric } from "../components/Pages/PageGeneric";
 const RecentPosts = (props: TPageGeneric) => <PageGeneric {...props} />;
 export default RecentPosts;
 

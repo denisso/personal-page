@@ -3,13 +3,13 @@ import styled from "styled-components";
 import { LinksProfiles } from "./Elements/LinksProfiles";
 import useTheme from "@mui/material/styles/useTheme";
 import dynamic from "next/dynamic";
-const ModalSendMessage= dynamic<{ [key: string]: any }>(() =>
-    import("./Footer/ModalSendMessage").then((res) => res.ModalSendMessage)
-);
-const ModalSearch = dynamic<{ [key: string]: any }>(() =>
-    import("./Footer/ModalSearch").then((res) => res.ModalSearch)
+const ModalSendMessage= dynamic(() =>
+    import("./Footer/ModalSendMessage")
 );
 // import { ModalSendMessage } from "./Footer/ModalSendMessage";
+const ModalSearch = dynamic(() =>
+    import("./Footer/ModalSearch")
+);
 // import { ModalSearch } from "./Footer/ModalSearch";
 const Container = styled("div")`
     display: flex;

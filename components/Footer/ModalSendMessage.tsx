@@ -85,7 +85,7 @@ const stateLabels: TStateLabels = {
     Successful: "Отправлено",
     Error: "Неудача, отправить снова",
 };
-export const ModalSendMessage = () => {
+const ModalSendMessage = () => {
     const { isModalOpen, closeModal } = useModal({ modal: "sendMassage" });
     const [stateSubmit, setStateSubmit] = React.useState<ESubmitStates>(
         ESubmitStates.Initial
@@ -141,3 +141,5 @@ export const ModalSendMessage = () => {
         </Modal>
     );
 };
+
+export default ModalSendMessage;
