@@ -1,9 +1,17 @@
+import React from "react";
 import { TPageHome } from "../lib/types";
 import Layout from "../components/Layout";
-import { Home } from "../components/Pages/Home";
+
 import { TSchema, ETypeFields } from "../lib/contentful/queryGenerator";
 import { EEntities } from "../lib/types";
 import { getStaticPropsWrapper } from "../lib/getStaticProps";
+import dynamic from "next/dynamic";
+
+
+const Home = dynamic<TPageHome>(() =>
+    import("../components/Pages/Home").then((res) => res.Home)
+);
+// import { Home } from "../components/Pages/Home";
 const HomePage = (props: TPageHome): JSX.Element => {
     return (
         <Layout

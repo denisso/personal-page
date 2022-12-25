@@ -2,8 +2,15 @@ import React from "react";
 import styled from "styled-components";
 import { LinksProfiles } from "./Elements/LinksProfiles";
 import useTheme from "@mui/material/styles/useTheme";
-import { ModalSendMessage } from "./Footer/ModalSendMessage";
-import { ModalSearch } from "./Footer/ModalSearch";
+import dynamic from "next/dynamic";
+const ModalSendMessage= dynamic<{ [key: string]: any }>(() =>
+    import("./Footer/ModalSendMessage").then((res) => res.ModalSendMessage)
+);
+const ModalSearch = dynamic<{ [key: string]: any }>(() =>
+    import("./Footer/ModalSearch").then((res) => res.ModalSearch)
+);
+// import { ModalSendMessage } from "./Footer/ModalSendMessage";
+// import { ModalSearch } from "./Footer/ModalSearch";
 const Container = styled("div")`
     display: flex;
     flex-direction: column;

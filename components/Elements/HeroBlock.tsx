@@ -58,7 +58,7 @@ type THeroBlockProps = {
 const HeroBlock = ({ hello, short, image }: THeroBlockProps) => {
     const theme: Theme = useTheme();
     return (
-        <Container>
+        <Container> 
             <div className="Text">
                 <h1 className="Hello">{hello}</h1>
                 <div className="Short">

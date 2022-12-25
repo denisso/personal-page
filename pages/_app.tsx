@@ -3,9 +3,7 @@ import { AnimatePresence } from "framer-motion";
 import { Provider } from "react-redux";
 import { useRouter } from "next/router";
 import store from "../store";
-import GlobalStyle from "../features/theme/globalStyles";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
+
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import ErrorBoundary from "../components/Service/ErrorBoundary";
@@ -13,6 +11,21 @@ import { AppProps } from "next/app";
 import { ThemeWrapper } from "../features/theme/ThemeWrapper";
 import { Context } from "../components/Pages/Context";
 import { useIntersection } from "../components/hooks/useIntersection";
+import dynamic from "next/dynamic";
+const Header = dynamic<{[key:string]:any}>(() =>
+    import("../components/Header").then((res) => res.Header)
+);
+// import { Header } from "../components/Header";
+const Footer = dynamic<{[key:string]:any}>(() =>
+    import("../components/Footer").then((res) => res.Footer)
+);
+// import { Footer } from "../components/Footer";
+
+const GlobalStyle = dynamic<{[key:string]:any}>(() =>
+    import("../features/theme/globalStyles")
+);
+// import GlobalStyle from "../features/theme/globalStyles";
+
 export default function MyApp({
     Component,
     pageProps,

@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-
 import { HTMLComponent } from "../Service/HTMLComponent";
 import HeroBlock from "../Elements/HeroBlock";
 import { TPageHome } from "../../lib/types";
