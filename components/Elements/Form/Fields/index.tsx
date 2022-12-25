@@ -13,13 +13,15 @@ const Container = styled("div")`
 
 export const Fields = ({
     fields,
+    className,
 }: {
     fields: Array<TField & { type: string }>;
+    className: string;
 }) => {
     const { status } = useFormikContext() as { status: TFormStatus };
 
     return (
-        <Container className="FormFields">
+        <Container className={className}>
             {fields.map(({ ...props }: TField & { type: string }) =>
                 props.type === "text" ? (
                     <FieldText

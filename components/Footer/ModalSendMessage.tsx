@@ -34,9 +34,16 @@ const Container = styled("div")`
     }
     .Form {
         flex-shrink: 1;
+        flex:1;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
         .Buttons {
             display: flex;
             justify-content: space-between;
+            .Fields {
+
+            }
             .ButtonItem {
                 display: flex;
                 gap: 1rem;
@@ -125,7 +132,7 @@ const ModalSendMessage = () => {
                 <Form
                     schema={schema}
                     onSubmit={onSubmit}
-                    className="Form SendMessage"
+                    className="Form"
                 >
                     <div className="Buttons">
                         <BtnSubmit

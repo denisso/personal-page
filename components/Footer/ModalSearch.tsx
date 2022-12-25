@@ -18,6 +18,7 @@ import {
 import { FormikHelpers } from "formik";
 import { useSelector } from "react-redux";
 import { selectArticles } from "../../features/state";
+import { styleOneLine } from "../Elements/Form/StylesCases/oneline";
 const ModalStyled = styled(Modal)`
     transition: width var(--transition), height var(--transition);
     padding: 1rem;
@@ -27,7 +28,7 @@ const ModalStyled = styled(Modal)`
     flex-direction: column;
 
     ${({ theme }) => theme.breakpoints.down("sm")} {
-        border-radius: none;
+        border-radius: 0;
         width: 100%;
         height: 100%;
     }
@@ -46,18 +47,8 @@ const ModalStyled = styled(Modal)`
     }
     .FirstLine {
         width: 100%;
-
-        .Buttons {
-            margin-left: 1rem;
-            display: flex;
-            gap: 1rem;
-            .BtnClose {
-                padding: 0;
-                .Icon {
-                    height: 3rem;
-                    width: 3rem;
-                }
-            }
+        .FormSearch {
+            ${styleOneLine}
         }
     }
 
@@ -150,16 +141,16 @@ const ModalSearch = () => {
                 <Form
                     schema={schema}
                     onSubmit={onSubmit}
-                    className="Form SendMessage"
-                    direction="row"
+                    className="FormSearch"
                 >
                     <div className="Buttons">
                         <BtnSubmit
+                            className="ButtonSubmit"
                             stateSubmit={stateSubmit}
                             stateLabels={stateLabels}
                         />
 
-                        <Button onClick={handleCanel} className="BtnClose">
+                        <Button onClick={handleCanel} className="ButtonClose">
                             <CloseIcon className="Icon" />
                         </Button>
                     </div>

@@ -17,36 +17,47 @@ interface IForm {
     (props: TFormProps): JSX.Element;
 }
 
-const Container = styled("div")<{ direction: TFormProps["direction"] }>`
-    display: flex;
-    flex-direction: ${({ direction }) => direction};
-    align-items: ${({ direction }) =>
-        direction === "row" ? "center" : "stretch"};
-    gap: 1rem;
-    .Input {
-        flex-grow: 1;
-        flex-shrink: 1;
-        overflow-y: visible;
-        z-index: 100;
-    }
-    .Control {
-        flex-shrink: 0;
+const FormContainer = styled(FForm)`
+    &default {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+
+        gap: 1rem;
+        .Fields {
+            flex-grow: 1;
+            flex-shrink: 1;
+            overflow-y: visible;
+            z-index: 100;
+        }
+        .Controls {
+            flex-shrink: 0;
+        }
     }
 `;
 
-const dummySubmit = () => undefined
+
+const dummySubmit = () =>false;
+
+/**
+ * class hierarchy
+ * Custom class from utside
+ * - div.Fields - section for inputs elements
+ * - - div.Field {name} - container for each field
+ * - - - MuiFormControl-root
+ * - - - - label.MuiInputLabel-root
+ * - - - - div.MuiInputBase-root
+ * - - - - - input[name={name}].MuiInputBase-input
+ * - div.Controls - section for controls elements
+ * - - OUR Custom components
+ */
+
 /**
  * Form with minimum styles, schema generator and etc
  * @param param0
  * @returns
  */
-export const Form: IForm = ({
-    onSubmit,
-    schema,
-    className,
-    children,
-    direction = "column",
-}) => {
+export const Form: IForm = ({ onSubmit, schema, className, children }) => {
     const { initialValues, validationSchema, fields } = React.useMemo(() => {
         return getDatas(schema);
     }, [schema]);
@@ -57,14 +68,10 @@ export const Form: IForm = ({
             onSubmit={onSubmit || dummySubmit}
             validationSchema={validationSchema}
         >
-            <FForm className={className}>
-                <Container direction={direction}>
-                    <div className="Input">
-                        <Fields fields={fields} />
-                    </div>
-                    <div className="Control">{children}</div>
-                </Container>
-            </FForm>
+            <FormContainer className={className || "default"}>
+                <Fields fields={fields} className="Fields" />
+                <div className="Controls">{children}</div>
+            </FormContainer>
         </Formik>
     );
 };

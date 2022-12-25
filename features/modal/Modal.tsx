@@ -16,7 +16,7 @@ export const modalDefaultStyle = css`
         margin: 0 auto;
         width: 100%;
         ${({ theme }) => theme.breakpoints.down("sm")} {
-            border-radius: none;
+            border-radius: 0;
             height: 100%;
         }
         ${({ theme }) => theme.breakpoints.up("sm")} {

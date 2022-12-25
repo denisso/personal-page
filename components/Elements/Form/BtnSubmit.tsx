@@ -27,6 +27,7 @@ type TBtnSubmitProps = {
 export const BtnSubmit = ({
     stateSubmit,
     stateLabels,
+    className = "ButtonSubmit",
     disabled
 }: TBtnSubmitProps) => {
     return (
@@ -35,18 +36,18 @@ export const BtnSubmit = ({
                 <Button
                     variant="contained"
                     type="submit"
-                    className="ButtonItem"
+                    className={className}
                     disabled={disabled}
                 >
                     {stateLabels.Initial}
                 </Button>
             ) : stateSubmit === ESubmitStates.Pending ? (
-                <div className={`ButtonItem Pending`}>
+                <div className={`${className} Pending`}>
                     <CircularProgress /> {stateLabels.Pending}
                 </div>
             ) : stateSubmit === ESubmitStates.Successful ? (
                 stateLabels.Successful ? (
-                    <div className="ButtonItem Successful">
+                    <div className={`${className} Successful`}>
                         <div className="IconWrapper">
                             <CheckIcon className="Icon" />
                         </div>
@@ -56,7 +57,7 @@ export const BtnSubmit = ({
                     <Button
                         variant="contained"
                         type="submit"
-                        className="ButtonItem"
+                        className={className}
                     >
                         {stateLabels.Initial}
                     </Button>
@@ -65,7 +66,7 @@ export const BtnSubmit = ({
                 <Button
                     variant="contained"
                     type="submit"
-                    className="ButtonItem"
+                    className={className}
                 >
                     {stateLabels.Error}
                 </Button>

@@ -4,19 +4,12 @@ import styled from "styled-components";
 import { TMenuItem } from "../../lib/types";
 import Button from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
-import {
-    TSchema,
-    Form,
-    ESubmitStates,
-    TStateLabels,
-    BtnSubmit,
-} from "../Elements/Form";
-import { FormikHelpers } from "formik";
+import { TSchema, Form } from "../Elements/Form";
 
 import { Chips, TChip } from "../Elements/Chips";
 import { useSelector } from "react-redux";
 import { selectState } from "../../features/state";
-
+import { styleOneLine } from "../Elements/Form/StylesCases/oneline";
 const ModalStyled = styled(Modal)`
     transition: width var(--transition), height var(--transition);
     padding: 1rem;
@@ -26,7 +19,7 @@ const ModalStyled = styled(Modal)`
     flex-direction: column;
 
     ${({ theme }) => theme.breakpoints.down("sm")} {
-        border-radius: none;
+        border-radius: 0;
         width: 100%;
         height: 100%;
     }
@@ -45,17 +38,10 @@ const ModalStyled = styled(Modal)`
     }
     .FirstLine {
         width: 100%;
-
-        .Buttons {
-            margin-left: 1rem;
-            display: flex;
-            gap: 1rem;
-            .BtnClose {
-                padding: 0;
-                .Icon {
-                    height: 3rem;
-                    width: 3rem;
-                }
+        .FormNav {
+            ${styleOneLine}
+            .ButtonReset {
+                flex: 1;
             }
         }
     }
@@ -72,18 +58,8 @@ const ModalStyled = styled(Modal)`
     }
 `;
 
-type TFormValues = {
-    filter: string;
-};
-const stateLabels: TStateLabels = {
-    Initial: "Сбросить",
-};
-
 export const ModalNav = () => {
     const { isModalOpen, closeModal } = useModal({ modal: "navMenu" });
-    const [stateSubmit, setStateSubmit] = React.useState<ESubmitStates>(
-        ESubmitStates.Initial
-    );
 
     const [filter, setFilter] = React.useState("");
     const schema: TSchema = React.useMemo(() => {
@@ -115,33 +91,24 @@ export const ModalNav = () => {
                     )
                 );
     }, [menu, setItems, filter]);
-    const onSubmit = React.useCallback(
-        (values: TFormValues, action: FormikHelpers<TFormValues>) => {
-            action.resetForm({ values: { filter: "" } });
-        },
-        []
-    );
+
     const handleCanel = () => {
         closeModal();
-        setTimeout(() => setStateSubmit(ESubmitStates.Initial), 300);
     };
     return (
         <ModalStyled open={isModalOpen}>
             <div className="FirstLine">
-                <Form
-                    schema={schema}
-                    className="Form SendMessage"
-                    direction="row"
-                    onSubmit={onSubmit}
-                >
+                <Form schema={schema} className="FormNav">
                     <div className="Buttons">
-                        <BtnSubmit
-                            stateSubmit={stateSubmit}
-                            stateLabels={stateLabels}
+                        <Button
+                            className="ButtonReset"
+                            variant="contained"
+                            type="reset"
                             disabled={filter === "" && true}
-                        />
-
-                        <Button onClick={handleCanel} className="BtnClose">
+                        >
+                            Сбросить
+                        </Button>
+                        <Button onClick={handleCanel} className="ButtonClose">
                             <CloseIcon className="Icon" />
                         </Button>
                     </div>
@@ -149,7 +116,7 @@ export const ModalNav = () => {
             </div>
             <div className="State">
                 Выберите интересующую категорию. Число рядом с названием
-                категориеи это количество статей.
+                категории это количество статей.
             </div>
             <div className="Items">
                 <div className="List">
