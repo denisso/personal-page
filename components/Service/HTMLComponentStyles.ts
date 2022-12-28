@@ -254,8 +254,20 @@ export const Content = styled("div")`
         border-left: 5px solid rgba(0, 0, 0, 0.3);
     }
     iframe {
-        width: 560px;
-        height: 315px;
+        display: block;
+        ${({ theme }) => theme.breakpoints.up("md")} {
+            width: 80%;
+            height: 400px;
+        }
+        ${({ theme }) => theme.breakpoints.down("md")} {
+            width: 90%;
+            height: 330px;
+        }
+        ${({ theme }) => theme.breakpoints.down("sm")} {
+            width: 100%;
+            height: 300px;
+        }
+
         margin: 0 auto;
         display: block;
     }
