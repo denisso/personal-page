@@ -10,18 +10,22 @@ const ModalStyled = styled(Modal)`
     display: flex;
     flex-direction: column;
     .List {
-        overflow-y: auto;
+        overflow-y: hidden;
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-direction: column;
         height: calc(100% - 4rem);
-        background: ${({ theme }) => theme.palette.color1[300]};
-        border-radius: 0.5rem;
+        .Gap{
+            flex: 1;
+        }
         .Box {
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 0.4rem;
-            height: 100%;
+            background: ${({ theme }) => theme.palette.color1[300]};
+            border-radius: 0.5rem;
             .Item {
                 padding: 0.5rem 1rem;
                 border-radius: var(--borderRadiusBlock);
@@ -102,7 +106,10 @@ const ItemHeader = ({
             {Array(level - 1)
                 .fill(0)
                 .map((_, i) => (
-                    <div key={`Level${i + 1}`} className={`Item-Entity Level${i + 1}`}></div>
+                    <div
+                        key={`Level${i + 1}`}
+                        className={`Item-Entity Level${i + 1}`}
+                    ></div>
                 ))}
 
             <div className="Content">{content}</div>
@@ -116,6 +123,7 @@ export const ModalTOC = () => {
     return (
         <ModalStyled open={isModalOpen}>
             <div className="List">
+                <div className="Gap"></div>
                 <div className="Box">
                     {headers.current.map(({ content, hash, level }, i) => (
                         <ItemHeader
@@ -128,6 +136,7 @@ export const ModalTOC = () => {
                         />
                     ))}
                 </div>
+                <div className="Gap"></div>
             </div>
             <div className="Controls">
                 <Button
