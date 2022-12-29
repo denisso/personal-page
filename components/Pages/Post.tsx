@@ -40,7 +40,7 @@ const Container = styled("div")`
     }
     .TableOfTheContent {
         position: sticky;
-        bottom: 0.5rem;
+        bottom: 2rem;
         display: flex;
         justify-content: center;
         .ButtonTOC {
