@@ -16,15 +16,15 @@ const LayoutStyled = styled(Layout)`
 const titleError = "Что-то пошло не так как планировалось";
 
 export const FallbackError = ({ title }: { title?: string }) => {
-    title = title || titleError;
+
     return (
         <LayoutStyled
-            title={titleError}
+            title={title || titleError}
             description={
                 "На сайте можно найти много материала по веб разработке."
             }
         >
-            <div className="Message">{title}</div>
+            <div className="Message">{title || titleError}</div>
             <div className="MessageLink">
                 <Link href={"/"}>
                     <a className="Link">{"Вернуться на главную страницу"}</a>
