@@ -48,8 +48,12 @@ export const Component = ({ data }: TPageGeneric) => {
                     <HTMLComponent content={data?.body} />
                 </section>
             )}
-            <h2>Список материалов</h2>
-            <EntitiesLinks linked={data?.links?._all || []} />
+            {data?.links?._all?.length && (
+                <>
+                    <h2>Список материалов</h2>
+                    <EntitiesLinks linked={data?.links?._all || []} />
+                </>
+            )}
         </Container>
     );
 };
