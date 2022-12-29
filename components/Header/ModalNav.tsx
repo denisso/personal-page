@@ -5,7 +5,7 @@ import { TMenuItem } from "../../lib/types";
 import Button from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
 import { TSchema, Form } from "../Elements/Form";
-
+import { FallbackLoading } from "../Elements/FallbackLoading";
 import { Chips, TChip } from "../Elements/Chips";
 import { useSelector } from "react-redux";
 import { selectState } from "../../features/state";
@@ -119,9 +119,16 @@ export const ModalNav = () => {
                 категории это количество статей.
             </div>
             <div className="Items">
-                <div className="List">
-                    <Chips list={items as Array<TChip>} callback={closeModal} />
-                </div>
+                {items?.length ? (
+                    <div className="List">
+                        <Chips
+                            list={items as Array<TChip>}
+                            callback={closeModal}
+                        />
+                    </div>
+                ) : (
+                    <FallbackLoading />
+                )}
             </div>
         </ModalStyled>
     );
