@@ -62,6 +62,7 @@ export const ModalNav = () => {
     const { isModalOpen, closeModal } = useModal({ modal: "navMenu" });
 
     const [filter, setFilter] = React.useState("");
+    const [loading, setLoading] = React.useState(true);
     const schema: TSchema = React.useMemo(() => {
         return [
             {
@@ -81,16 +82,15 @@ export const ModalNav = () => {
 
     const { menu } = useSelector(selectState);
     React.useEffect(() => {
-        if (menu instanceof Object)
-            if (Array.isArray(menu))
-                setItems(
-                    menu.filter((item) =>
-                        item?.title
-                            ?.toLowerCase()
-                            ?.includes(filter?.toLowerCase())
-                    )
-                );
-    }, [menu, setItems, filter]);
+        if (Array.isArray(menu)) {
+            setItems(
+                menu.filter((item) =>
+                    item?.title?.toLowerCase()?.includes(filter?.toLowerCase())
+                )
+            );
+            setLoading(false);
+        }
+    }, [menu, setItems, filter, setLoading]);
 
     const handleCanel = () => {
         closeModal();
@@ -119,15 +119,19 @@ export const ModalNav = () => {
                 категории это количество статей.
             </div>
             <div className="Items">
-                {items?.length ? (
+                {loading ? (
+                    <FallbackLoading />
+                ) : items?.length ? (
                     <div className="List">
                         <Chips
                             list={items as Array<TChip>}
                             callback={closeModal}
                         />
                     </div>
+                ) : !items?.length && filter !== "" ? (
+                    <>По фильтру {filter} ничего не найдено</>
                 ) : (
-                    <FallbackLoading />
+                    <>Что-то пошло не так</>
                 )}
             </div>
         </ModalStyled>
