@@ -16,7 +16,7 @@ const ModalStyled = styled(Modal)`
         justify-content: center;
         flex-direction: column;
         height: calc(100% - 4rem);
-        .Gap{
+        .Gap {
             flex: 1;
         }
         .Box {
@@ -97,8 +97,15 @@ const ItemHeader = ({
     level,
     closeCallback,
 }: TItemHeader) => {
+    const ref = React.useRef<HTMLAnchorElement>(null);
+    React.useEffect(() => {
+        if (active) {
+            ref.current?.scrollIntoView();
+        }
+    }, [active]);
     return (
         <a
+            ref={ref}
             href={`#${hash}`}
             className={"Link Item" + (active ? " active" : "")}
             onClick={closeCallback}
