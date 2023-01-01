@@ -82,7 +82,7 @@ export const ModalNav = () => {
 
     const { menu } = useSelector(selectState);
     React.useEffect(() => {
-        if (Array.isArray(menu)) {
+        if (Array.isArray(menu) && menu.length) {
             setItems(
                 menu.filter((item) =>
                     item?.title?.toLowerCase()?.includes(filter?.toLowerCase())
