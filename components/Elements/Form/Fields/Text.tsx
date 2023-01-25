@@ -6,6 +6,7 @@ import styled from "styled-components";
 import * as Yup from "yup";
 
 const FieldContainer = styled("div")`
+  height: 100%;
   & > .MuiTextField-root {
     height: 100%;
     .MuiInputBase-root {
