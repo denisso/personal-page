@@ -1,5 +1,8 @@
 import React from "react";
 import { TIntersectionMethods } from "../hooks/useIntersection";
-export const Context = React.createContext<{
+
+interface IContext {
     addElement: TIntersectionMethods["addElement"];
-}>({ addElement: () => null});
+}
+
+export const Context = React.createContext<IContext | null>(null);

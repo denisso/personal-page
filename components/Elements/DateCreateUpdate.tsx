@@ -21,7 +21,7 @@ export const DateCreateUpdate = ({
                 </span>
             ) : (
                 <span>
-                    Обновлен: {moment(publishedAt).format("YYYY/MM/DD")}
+                    Создан: {moment(publishedAt).format("YYYY/MM/DD")}
                 </span>
             )}
         </span>

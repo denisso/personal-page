@@ -130,7 +130,7 @@ export const ModalTOC = () => {
     return (
         <ModalStyled open={isModalOpen}>
             <div className="List">
-                <div className="Gap"></div>
+                {/* <div className="Gap"></div> */}
                 <div className="Box">
                     {headers.current.map(({ content, hash, level }, i) => (
                         <ItemHeader

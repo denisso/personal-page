@@ -249,9 +249,25 @@ export const Content = styled("div")`
     blockquote {
         margin: 0;
         text-indent: 0;
-        color: rgba(0, 0, 0, 0.5);
         padding-left: calc(2rem - 5px);
-        border-left: 5px solid rgba(0, 0, 0, 0.3);
+        border-left-width: 5px;
+        border-left-style: solid;
+    }
+    table{
+        border-collapse: collapse;
+
+        td, th{
+            text-align: center;
+            border-bottom-style: solid;
+            border-bottom-width: 1px;
+            border-bottom-color: var(--colorText);
+            padding: .2rem .5rem;
+        }
+        td:not(:last-child), th:not(:last-child){
+            border-right-style: solid;
+            border-right-width: 1px;
+            border-right-color: var(--colorText);
+        }
     }
     iframe {
         display: block;
