@@ -15,7 +15,7 @@ const Container = styled("div")`
         flex-wrap: wrap;
         padding: 0.1rem 0;
         align-items: center;
-        justify-content: center;
+        justify-content: left;
         .ChipStyle {
             font-size: 0.9rem;
             height: 1.6rem;

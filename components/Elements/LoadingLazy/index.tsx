@@ -1,8 +1,8 @@
 import React from "react";
 import { Skeleton, SkeletonProps } from "@mui/material";
-import { Context } from "../../Pages/Context";
 import styled from "styled-components";
 import { Context as ContextLoad } from "./Context";
+import { useContextGlobal } from "../../ContextGlobal";
 
 const Container = styled("div")`
     position: relative;
@@ -38,15 +38,15 @@ export const LoadingLazy = ({
 }: TLoadingLazyProps) => {
     const [client, setClient] = React.useState(false);
     const ref = React.useRef<Element>();
-    const { addElement } = React.useContext(Context);
+    const { addElement } = useContextGlobal();
     const [state, setState] = React.useState(SNotIntersected);
-    const unbserve = React.useRef(null);
+    const unobserve = React.useRef<ReturnType<typeof addElement>>();
     React.useEffect(() => {
         setClient(true);
         return () => {
-            if (unbserve.current instanceof Function) {
+            if (unobserve.current instanceof Function) {
                 try {
-                    unbserve.current();
+                    unobserve.current();
                 } catch (err) {}
             }
         };
@@ -87,7 +87,7 @@ export const LoadingLazy = ({
                 ref={(element) => {
                     if (element && !ref.current) {
                         ref.current = element;
-                        unbserve.current = addElement({ element, trigger });
+                        unobserve.current = addElement({ element, trigger });
                     }
                 }}
             >
