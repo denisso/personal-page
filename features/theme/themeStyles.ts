@@ -12,7 +12,7 @@ export const colors: TColors = {
 };
 
 export const colorsDark: TColors = {
-    colorRoot: "gray",
+    colorRoot: "#1a1916",
     color1: reverseColors(colors.color1),
     color2: reverseColors(colors.color2),
     color3: reverseColors(colors.color3),
