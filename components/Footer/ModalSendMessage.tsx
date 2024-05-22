@@ -103,10 +103,10 @@ const ModalSendMessage = () => {
             setStateSubmit(ESubmitStates.Pending);
 
             axios
-                .post("/.netlify/functions/send-contact-email", {
-                    contactName: values.name,
-                    contactEmail: values.email,
-                    message: values.message,
+                .post("/api/sendmail", {
+                    name: values.name,
+                    mail: values.email,
+                    text: values.message,
                 })
                 .then(() => {
                     setStateSubmit(ESubmitStates.Successful);
