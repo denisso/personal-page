@@ -1,7 +1,7 @@
 import React from "react"
 import { Button } from "@mui/material";
 import { CircularProgress } from "@mui/material";
-import CheckIcon from "@mui/icons-material/Check";
+// import CheckIcon from "@mui/icons-material/Check";
 
 export enum ESubmitStates {
     Initial = "Не отправлено",
@@ -48,9 +48,9 @@ export const BtnSubmit = ({
             ) : stateSubmit === ESubmitStates.Successful ? (
                 stateLabels.Successful ? (
                     <div className={`${className} Successful`}>
-                        <div className="IconWrapper">
+                        {/* <div className="IconWrapper">
                             <CheckIcon className="Icon" />
-                        </div>
+                        </div> */}
                         {stateLabels.Successful}
                     </div>
                 ) : (
