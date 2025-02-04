@@ -1,33 +1,52 @@
-[web site](https://mrdramm.netlify.app/)
+# Сайт со статьями и личным опытом
 
-Нужно подключить сервисы:
-* mailgun для отправки почты
-* contentful для хранения контента
-* cloudinary для хранения madia 
+Этот репозиторий содержит код для сайта, на котором публикуются статьи и описания личного опыта. Сайт доступен по [ссылке](https://mrdramm.vercel.app/).
 
-Описание process.env переменных(настройки можно найти в панели управления):
+## Подключенные сервисы
 
-* Переменные для contentful
-  * CONTENTFUL_TOKEN - токен
-  * SPACEID - space
+Для работы сайта используются следующие сервисы:
 
-* Переменные для маилган
-  * MAILGUN_API_KEY - токен
-  * MAILGUN_DOMAIN - имя нашего домена на маилган
-  * MAILGUN_URL - адрес апи сервера малган
-  * MAILGUN_FROM_EMAIL_ADDRESS - адрес с которого нам маилган отправляет письма
-  * MAILGUN_CONTACT_TO_EMAIL_ADDRESS - адрес на котором получаем письма
+- **Mailgun** — для отправки электронной почты.
+- **Contentful** — для хранения контента.
+- **Cloudinary** — для хранения медиафайлов.
 
-* Переменные для cloudinary
-  * IMAGECLOUDPREFIX в формате  https://res.cloudinary.com/[account name]/image/upload
+## Настройка переменных окружения (`process.env`)
 
-* SECURITY_TOKEN - для доступа к API сервера
+Для корректной работы сайта необходимо настроить следующие переменные окружения. Настройки можно найти в панели управления соответствующих сервисов.
+
+### Переменные для Contentful
+- `CONTENTFUL_TOKEN` — токен доступа к Contentful.
+- `SPACEID` — идентификатор пространства (space) в Contentful.
+
+### Переменные для Mailgun
+- `MAILGUN_API_KEY` — API-ключ для доступа к Mailgun.
+- `MAILGUN_DOMAIN` — имя домена, зарегистрированного в Mailgun.
+- `MAILGUN_URL` — URL API-сервера Mailgun.
+- `MAILGUN_FROM_EMAIL_ADDRESS` — адрес электронной почты, с которого будут отправляться письма.
+- `MAILGUN_CONTACT_TO_EMAIL_ADDRESS` — адрес электронной почты, на который будут приходить письма.
+
+### Переменные для Cloudinary
+- `IMAGECLOUDPREFIX` — префикс для доступа к медиафайлам в формате: `https://res.cloudinary.com/[account name]/image/upload`.
+
+### Дополнительные переменные
+- `SECURITY_TOKEN` — токен для доступа к API сервера.
 
 ## Начало работы
 
-```bash
-npm install
-npm run dev
-```
+1. Установите зависимости:
 
-Открываем в браузере [http://localhost:3000](http://localhost:3000)
+   ```bash
+   npm install
+   ```
+
+2. Запустите проект в режиме разработки:
+
+   ```bash
+   npm run dev
+   ```
+
+3. Откройте сайт в браузере по адресу: [http://localhost:3000](http://localhost:3000).
+
+---
+
+Теперь ваш сайт готов к использованию! Если у вас возникнут вопросы, обратитесь к документации соответствующих сервисов или к настройкам в панели управления.
